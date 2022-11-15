@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "FuturaLight";
+    src: url("../static/fonts/FuturaPTLight.otf");
+}
+
+@font-face {
+    font-family: "FuturaMedium";
+    src: url("../static/fonts/FuturaPTMedium.otf");
+}
+
+@font-face {
+    font-family: "FuturaHeavy";
+    src: url("../static/fonts/FuturaPTHeavy.otf");
+}
+
+@font-face {
+    font-family: "FuturaBold";
+    src: url("../static/fonts/FuturaPTBold.otf");
+}
+
+@font-face {
+    font-family: "FuturaCondMedium";
+    src: url("../static/fonts/FuturaPTCondMedium.otf");
+}
