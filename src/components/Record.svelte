@@ -13,5 +13,5 @@
     <span>{account}</span>
     <span autocomplete="off">{amount}</span>
     <span>{new Date(date).getMonth() + "/" + new Date(date).getDate()}</span>
-    <Dropdown id=_id></Dropdown>
+    <Dropdown id={_id}></Dropdown>
 </div>

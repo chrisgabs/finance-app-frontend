@@ -22,4 +22,11 @@ export default class Database {
         return response.json();
     }
 
+    public static deleteRecord = async (id: string) => {
+        const response = await fetch(`http://localhost:9090/records/delete/${id}`, {
+            method: 'DELETE'
+        });
+        return response.json();
+    }
+
 }

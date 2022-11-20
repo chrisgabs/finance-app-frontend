@@ -1,6 +1,22 @@
 <script lang="ts">
+	import type { recordType } from "src/types/record.type";
+    import Database from "../lib/Database";
+    import { records } from "../stores/stores";
     let show = false;
     export let id:string;
+
+    const handleDelete = () => {
+        Database.deleteRecord(id).then((res) => {
+            if (res.deleted) {
+                records.update((records) => records.filter((record) => record._id !== id))
+            }else{
+                console.log(res)
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
 </script>
 
 <div class="flex justify-center">
@@ -16,7 +32,7 @@
             <a href="#" class="block px-4 text-sm capitalize text-gray-700 hover:bg-slate-100">
                 edit
             </a>
-            <a href="#" class="block px-4 text-sm capitalize text-gray-700 hover:bg-slate-100">
+            <a href="#" on:click={handleDelete} class="block px-4 text-sm capitalize text-gray-700 hover:bg-slate-100">
                 delete
             </a>
         </div>

@@ -10,7 +10,6 @@
     let amount:number = 0;
     
     // Populate store with data received from ssr
-    console.log(data.records)
     records.set(data.records)
 
     const handleSubmit = () => {
@@ -68,7 +67,7 @@
         </button>
     </div>
 
-    {#each $records as record}
+    {#each $records as record (record._id)}
         <Record record={record}></Record>
     {/each}
 
