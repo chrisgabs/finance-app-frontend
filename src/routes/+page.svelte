@@ -1,28 +1,39 @@
 <script lang="ts">
     import type { record } from "src/types/record.type";
     import { records } from "../stores/stores"
+    import Database from "../lib/Database"
     export let data:any;
-
+    
     let type:string = "";
     let account:string = "";
     let amount:number = 0;
+    
+    // Populate store with data received from ssr
+    records.set(data.records)
 
     const handleSubmit = () => {
-        let date = new Date();
-        records.update((records) => {
-            records.push({
-                type,
-                account,
-                amount,
-                date
-            })
-            return records
+        let newRecord:record = {
+            "type": type,
+            "account": account, 
+            "amount": amount,
+            "date": new Date()
+        }
+        Database.addRecord(newRecord).then((res) => {
+            if (res.createdRecord) {
+                records.update((records) => {
+                    records.push(newRecord)
+                    return records
+                })
+            }else{
+                console.log(res)
+            }
+        }).catch((err) => {
+            console.log(err)
         })
     }
-
+    
     $: {
-        records.set(data.records)
-        console.log($records)
+        // console.log($records)
     }
 </script>
 

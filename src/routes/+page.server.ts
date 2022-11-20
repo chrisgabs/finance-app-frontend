@@ -1,4 +1,4 @@
-import Database from '../lib/server/Database';
+import Database from '../lib/Database';
  
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
