@@ -1,4 +1,4 @@
-import type { record } from "src/types/record.type";
+import type { recordType } from "src/types/record.type";
 
 export default class Database {
 
@@ -11,7 +11,7 @@ export default class Database {
         return data;
     }
 
-    public static addRecord = async (record: record) => {
+    public static addRecord = async (record: recordType) => {
         const response = await fetch('http://localhost:9090/records/create', {
             method: 'POST',
             headers: {

@@ -1,7 +1,8 @@
 <script lang="ts">
-    import type { record } from "src/types/record.type";
+    import type { recordType } from "src/types/record.type";
     import { records } from "../stores/stores"
     import Database from "../lib/Database"
+    import  Record from "../components/Record.svelte";
     export let data:any;
     
     let type:string = "";
@@ -9,21 +10,24 @@
     let amount:number = 0;
     
     // Populate store with data received from ssr
+    console.log(data.records)
     records.set(data.records)
 
     const handleSubmit = () => {
-        let newRecord:record = {
-            "type": type,
-            "account": account, 
-            "amount": amount,
-            "date": new Date()
-        }
+        let newRecord = {"_id": "", "type": type, "account": account, "amount": amount,"date": new Date()}
         Database.addRecord(newRecord).then((res) => {
             if (res.createdRecord) {
                 records.update((records) => {
-                    records.push(newRecord)
+                    records.push({
+                        "_id" : res.createdRecord._id,
+                        "type": type,
+                        "account": account, 
+                        "amount": amount,
+                        "date": new Date()
+                    })
                     return records
                 })
+
             }else{
                 console.log(res)
             }
@@ -64,14 +68,8 @@
         </button>
     </div>
 
-    {#each $records as {type, date, amount, account}}
-        <div class="record-item flex justify-between items-center outline outline-1 p-2">
-            <div class="picture w-8 h-8 bg-white"></div>
-            <span>{type}</span>
-            <span autocomplete="off">{amount}</span>
-            <span>{new Date(date).getMonth() + "/" + new Date(date).getDate()}</span>
-            <button class="w-8 h-8 outline outline-1">asd</button>
-        </div>
+    {#each $records as record}
+        <Record record={record}></Record>
     {/each}
 
 </div>
