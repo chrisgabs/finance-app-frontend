@@ -3,14 +3,26 @@
     import { records } from "../stores/stores"
     import Database from "../lib/Database"
     import  Record from "../components/Record.svelte";
-    export let data:any;
+    import { fade } from 'svelte/transition';
+
+    // Props from server load
+    // export let data:any;
     
     let type:string = "";
     let account:string = "";
     let amount:number = 0;
-    
-    // Populate store with data received from ssr
-    records.set(data.records)
+    let recordsLoading:boolean = true;
+
+    // Check if ssr still possible and if its the best decision
+    Database.fetchRecords().then((res) => {
+        records.set(res.records)
+        recordsLoading = false;
+    }).catch((err) => {
+        console.log(typeof(err))
+    })
+
+    // records.set([])
+
 
     const handleSubmit = () => {
         let newRecord = {"_id": "", "type": type, "account": account, "amount": amount,"date": new Date()}
@@ -66,6 +78,12 @@
             <span class="sr-only">Icon description</span>
         </button>
     </div>
+
+    {#if recordsLoading}
+         <div class="Loading text-center" transition:fade>
+             Loading Records
+         </div>
+    {/if}
 
     {#each $records as record (record._id)}
         <Record record={record}></Record>
