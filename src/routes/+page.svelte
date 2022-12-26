@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { recordType } from "src/types/record.type";
-    import { records } from "../stores/stores"
+    import Account from "../components/Account.svelte";
+    import { records, accounts } from "../stores/stores"
     import Database from "../lib/Database"
     import  Record from "../components/Record.svelte";
     import { fade } from 'svelte/transition';
@@ -15,10 +15,10 @@
 
     // Check if ssr still possible and if its the best decision
     Database.fetchRecords().then((res) => {
-        records.set(res.records)
+        records.set(res)
         recordsLoading = false;
     }).catch((err) => {
-        console.log(typeof(err))
+        console.log(err)
     })
 
     // records.set([])
@@ -52,13 +52,12 @@
     }
 </script>
 
-<div class="flex-col m-auto my-auto">
+<div class="flex-col m-auto my-auto max-w-[500px]">
 
-    <div class="accounts outline outline-1 p-2">
-        <div class="account bg-slate-400 w-fit">
-            <div class="account_name">Account 1</div>
-            <div class="account_balance">Balance: $100</div>
-        </div>
+    <div class="accounts-container flex outline-1 outline p-2 space-x-2 overflow-auto no-scrollbar">
+        {#each $accounts as account (account._id)}
+            <Account account={account}/>
+        {/each}
     </div>
 
     <div class="add-item flex justify-between space-x-4 outline outline-1 p-2 my-2">
@@ -86,7 +85,24 @@
     {/if}
 
     {#each $records as record (record._id)}
-        <Record record={record}></Record>
+        <Record record={record}/>
     {/each}
 
 </div>
+
+<style>
+    @tailwind components;
+
+    @layer components {
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    }
+</style>

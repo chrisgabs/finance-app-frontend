@@ -7,7 +7,7 @@
     let { _id, type, account, amount, date } = record;
 </script>
 
-<div class="record-item flex justify-between items-center outline outline-1 p-2">
+<div class="record-item flex justify-between items-center outline outline-1 p-2 mt-2">
     <div class="picture w-8 h-8 bg-slate-500"></div>
     <span>{type}</span>
     <span>{account}</span>

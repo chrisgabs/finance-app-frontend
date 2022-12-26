@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { recordType } from "src/types/record.type";
     import Database from "../lib/Database";
     import { records } from "../stores/stores";
     let show = false;
@@ -29,10 +28,10 @@
         </button>
 
         <div class:show={show} class:hide={!show}>
-            <a href="#" class="block px-4 text-sm capitalize text-gray-700 hover:bg-slate-100">
+            <a href="#foo" class="block px-4 text-sm capitalize text-gray-700 hover:bg-slate-100">
                 edit
             </a>
-            <a href="#" on:click={handleDelete} class="block px-4 text-sm capitalize text-gray-700 hover:bg-slate-100">
+            <a href="#bar" on:click={handleDelete} class="block px-4 text-sm capitalize text-gray-700 hover:bg-slate-100">
                 delete
             </a>
         </div>
