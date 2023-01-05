@@ -29,4 +29,9 @@ export default class Database {
         return response.json();
     }
 
+    public static fetchUserInformation = async (id: string) => {
+        const response = await fetch(`http://localhost:9090/users/get/${id}`);
+        return response.json();
+    }
+
 }

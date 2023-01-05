@@ -11,7 +11,8 @@
     <div class="picture w-8 h-8 bg-slate-500"></div>
     <span>{type}</span>
     <span>{account}</span>
-    <span autocomplete="off">{amount}</span>
+    <!-- why this redmarked by intellisense with autocomplete=off-->
+    <span>{amount}</span>
     <span>{new Date(date).getMonth() + "/" + new Date(date).getDate()}</span>
     <Dropdown id={_id}></Dropdown>
 </div>
