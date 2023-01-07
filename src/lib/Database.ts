@@ -41,4 +41,12 @@ export default class Database {
         return response.json();
     }
 
+    public static resumeSession = async () => {
+        const response = await fetch('http://localhost:9090/users/resume', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        return response.json();
+    }
+
 }

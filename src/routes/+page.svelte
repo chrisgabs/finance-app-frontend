@@ -6,11 +6,27 @@
     import CreateRecordSection from "../components/CreateRecordSection.svelte";
     import { fade } from 'svelte/transition';
     import LoginSection from "../components/LoginSection.svelte";
+	import { onMount } from "svelte";
 
     // Props from server load
     // export let data:any;
     
     let recordsLoading:boolean = true;
+
+    onMount(() => {
+        Database.resumeSession().then((res) => {
+            user.set({
+                "id": res._id,
+                "name": res.name,
+                "picture": res.picture
+            });
+
+            accounts.set(res.accounts);
+            records.set(res.records);
+        }).catch((err) => {
+            console.log(err)
+        })
+    })
 
 </script>
 
