@@ -1,12 +1,18 @@
 <script lang="ts">
     import Account from "../components/Account.svelte";
     import { records, accounts, user } from "../stores/stores"
-    import Database from "../lib/Database"
     import  Record from "../components/Record.svelte";
     import CreateRecordSection from "../components/CreateRecordSection.svelte";
     import { fade } from 'svelte/transition';
-    import LoginSection from "../components/LoginSection.svelte";
+    import LoginSection from "../components/Auth/LoginSection.svelte";
 	import { onMount } from "svelte";
+	import type { PageData } from "./$types";
+	import { enhance } from "$app/forms";
+
+    export let data: PageData;
+    if (data.session) {
+        console.log(data.session.user)
+    }
 
     // Props from server load
     // export let data:any;
@@ -14,18 +20,7 @@
     let recordsLoading:boolean = true;
 
     onMount(() => {
-        Database.resumeSession().then((res) => {
-            user.set({
-                "id": res._id,
-                "name": res.name,
-                "picture": res.picture
-            });
 
-            accounts.set(res.accounts);
-            records.set(res.records);
-        }).catch((err) => {
-            console.log(err)
-        })
     })
 
 </script>
@@ -34,11 +29,24 @@
 
 <div class="flex-col m-auto my-auto max-w-[500px]">
 
-    <div class="flex-col justify-center column">
-        {#if $user.id}
-            <p>User: {$user.name}</p>
-            <p>ID: {$user.id}</p>
+    <div class="my-auto flex flex-col gap-3">
+        {#if data.session}
+            <h1>Hello {data.session.user.user_metadata.first_name + " " + data.session.user.user_metadata.last_name}</h1>
         {/if}
+        <form class="flex flex-col gap-2 mx-[100px]" method="POST" action="?/login" use:enhance>
+            {#if !data.session}
+                <input class="outline outline-1 p-2" type="text" placeholder="email" name="email">
+                <input class="outline outline-1 p-2" type="password" placeholder="password" name="password">
+            {/if}
+            <div class="flex justify-center gap-2">
+                {#if !data.session}
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
+                    <button formaction="?/register" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Register</button>
+                {:else}
+                    <button formaction="?/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</button>
+                {/if}
+            </div>
+        </form>
     </div>
 
     <LoginSection/>

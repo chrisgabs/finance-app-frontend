@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Database from "../lib/Database";
     import { records } from "../stores/stores";
 
     let type:string = "";
@@ -8,26 +7,26 @@
 
     const handleSubmit = () => {
         let newRecord = {"_id": "", "type": type, "account": account, "amount": amount,"date": new Date()}
-        Database.addRecord(newRecord).then((res) => {
-            // Check if record is created
-            if (res.record) {
-                records.update((records) => {
-                    records.push({
-                        "_id" : res.record._id,
-                        "type": type,
-                        "account": account, 
-                        "amount": amount,
-                        "date": new Date()
-                    })
-                    return records
-                })
+        // Database.addRecord(newRecord).then((res) => {
+        //     // Check if record is created
+        //     if (res.record) {
+        //         records.update((records) => {
+        //             records.push({
+        //                 "_id" : res.record._id,
+        //                 "type": type,
+        //                 "account": account, 
+        //                 "amount": amount,
+        //                 "date": new Date()
+        //             })
+        //             return records
+        //         })
 
-            }else{
-                console.log(res)
-            }
-        }).catch((err) => {
-            console.log(err)
-        })
+        //     }else{
+        //         console.log(res)
+        //     }
+        // }).catch((err) => {
+        //     console.log(err)
+        // })
     }
 </script>
 

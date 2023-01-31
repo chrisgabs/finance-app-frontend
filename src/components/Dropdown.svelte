@@ -1,19 +1,18 @@
 <script lang="ts">
-    import Database from "../lib/Database";
     import { records } from "../stores/stores";
     let show = false;
     export let id:string;
 
     const handleDelete = () => {
-        Database.deleteRecord(id).then((res) => {
-            if (res.deleted) {
-                records.update((records) => records.filter((record) => record._id !== id))
-            }else{
-                console.log(res)
-            }
-        }).catch((err) => {
-            console.log(err)
-        })
+        // Database.deleteRecord(id).then((res) => {
+        //     if (res.deleted) {
+        //         records.update((records) => records.filter((record) => record._id !== id))
+        //     }else{
+        //         console.log(res)
+        //     }
+        // }).catch((err) => {
+        //     console.log(err)
+        // })
     }
 
 </script>
