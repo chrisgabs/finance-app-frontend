@@ -1,5 +1,5 @@
 import { records, accounts, user } from "../stores/stores"
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import {fail, redirect} from "@sveltejs/kit"
 import { error } from '@sveltejs/kit';
 import { time_ranges_to_array } from "svelte/internal";
@@ -9,6 +9,22 @@ import { supabase } from "$lib/supabaseClient";
 //     // Databaase.fetchRecords() returns a promise. should be .then() instead of try catch
 //     let data = null;    
 // }
+
+export const load = (async ({ locals }) => {
+	const accounts = await locals.sb.from("fin_accounts").select("id, name, balance")
+	const records = await locals.sb.from("fin_records").select("id, type, amount, account, date_time")
+
+	if (accounts.error){
+		console.log(accounts.error);
+	} else if (records.error){
+		console.log(records.error);
+	}
+
+	return {
+		accounts: accounts.data,
+		records: records.data
+	};
+}) satisfies PageServerLoad;
 
 export const actions = {
   login: async ({request, locals}) => {

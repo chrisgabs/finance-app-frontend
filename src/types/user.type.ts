@@ -1,5 +1,4 @@
 export type userType = {
-    id: string;
+    id: number;
     name: string;
-    picture: string;
 }

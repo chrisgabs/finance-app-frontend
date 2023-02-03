@@ -1,21 +1,36 @@
 <script lang="ts">
     import Account from "../components/Account.svelte";
-    import { records, accounts, user } from "../stores/stores"
+    import { records, accounts } from "../stores/stores"
     import  Record from "../components/Record.svelte";
     import CreateRecordSection from "../components/CreateRecordSection.svelte";
-    import { fade } from 'svelte/transition';
     import LoginSection from "../components/LoginSection/index.svelte";
 	import { onMount } from "svelte";
 	import type { PageData } from "./$types";
     import * as api from '$lib/api';
 	import CreateAccountSection from "../components/CreateAccountSection.svelte";
+	import type { recordType } from "src/types/record.type";
+	import type { accountType } from "src/types/account.type";
+	import type { Session } from "@supabase/supabase-js";
 
     export let data: PageData;
-    if (data.session) {
-        console.log(data.session.user.email)
+
+    interface PageData {
+        records: recordType[] | null,
+        accounts: accountType[] | null,
+        session: Session | null,
     }
 
-    let recordsLoading:boolean = true;
+    if (data.session) {
+        console.log(data.records)
+        console.log(data.accounts)
+        
+        if (data.records && data.accounts) {
+            records.set(data.records)
+            accounts.set(data.accounts)
+        }
+    }
+
+    // let recordsLoading:boolean = true;
 
     onMount(() => {
         api.get("accounts", "hatdog").then((res) => console.log(res))
@@ -40,11 +55,11 @@
 
     <CreateRecordSection/>
 
-    {#if recordsLoading}
+    <!-- {#if recordsLoading}
          <div class="Loading text-center" transition:fade>
              Loading Records
          </div>
-    {/if}
+    {/if} -->
 
     {#each $records as record (record._id)}
         <Record record={record}/>

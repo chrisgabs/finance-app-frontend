@@ -1,6 +1,5 @@
 export type accountType = {
-    _id: string,
+    id: number,
     name: string,
     amount: number,
-    color: string
 }

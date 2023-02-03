@@ -10,8 +10,8 @@ export const records = writable<recordType[]>([
 ]);
 
 export const accounts = writable<accountType[]>([
-    { _id: '1', name: 'Cash', amount: 50000, color: '#f44336' },
-    { _id: '2', name: 'UnionBank', amount: 100, color: '#f44336' },
+    { _id: '1', name: 'Default', amount: 50000},
+    { _id: '2', name: 'UnionBank', amount: 100},
     // { _id: '3', name: 'Gcash', amount: 8938, color: '#f44336' },
     // { _id: '4', name: 'Banko Sentral ng Pilipinas', amount: 1000, color: '#f44336' },
     // { _id: '5', name: 'Metrobank', amount: 10000, color: '#f44336' },
@@ -21,5 +21,4 @@ export const accounts = writable<accountType[]>([
 export const user = writable<userType>({
     id: '',
     name: '',
-    picture: ''
 });
