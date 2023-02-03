@@ -4,52 +4,32 @@
     import  Record from "../components/Record.svelte";
     import CreateRecordSection from "../components/CreateRecordSection.svelte";
     import { fade } from 'svelte/transition';
-    import LoginSection from "../components/Auth/LoginSection.svelte";
+    import LoginSection from "../components/LoginSection/index.svelte";
 	import { onMount } from "svelte";
 	import type { PageData } from "./$types";
-	import { enhance } from "$app/forms";
+    import * as api from '$lib/api';
+	import CreateAccountSection from "../components/CreateAccountSection.svelte";
 
     export let data: PageData;
     if (data.session) {
-        console.log(data.session.user)
+        console.log(data.session.user.email)
     }
 
-    // Props from server load
-    // export let data:any;
-    
     let recordsLoading:boolean = true;
 
     onMount(() => {
-
+        api.get("accounts", "hatdog").then((res) => console.log(res))
     })
 
 </script>
 
 <!-- ---------------------------------- HTML ---------------------------------- -->
 
-<div class="flex-col m-auto my-auto max-w-[500px]">
+<div class="flex-col m-auto my-auto max-w-[500px] space-y-2">
 
-    <div class="my-auto flex flex-col gap-3">
-        {#if data.session}
-            <h1>Hello {data.session.user.user_metadata.first_name + " " + data.session.user.user_metadata.last_name}</h1>
-        {/if}
-        <form class="flex flex-col gap-2 mx-[100px]" method="POST" action="?/login" use:enhance>
-            {#if !data.session}
-                <input class="outline outline-1 p-2" type="text" placeholder="email" name="email">
-                <input class="outline outline-1 p-2" type="password" placeholder="password" name="password">
-            {/if}
-            <div class="flex justify-center gap-2">
-                {#if !data.session}
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
-                    <button formaction="?/register" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Register</button>
-                {:else}
-                    <button formaction="?/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</button>
-                {/if}
-            </div>
-        </form>
-    </div>
+    <LoginSection session={data.session}/>
 
-    <LoginSection/>
+    <CreateAccountSection/>
 
     <!-- Accounts Section -->
     <div class="accounts-container flex outline-1 outline p-2 space-x-2 overflow-auto no-scrollbar">
