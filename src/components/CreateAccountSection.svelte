@@ -1,18 +1,41 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-    import { records } from "../stores/stores";
+	import { enhance, type SubmitFunction } from "$app/forms";
+	import type { accountType } from "src/types/account.type";
+    import { accounts } from "../stores/stores";
 
-    let type:string = "";
-    let account:string = "";
-    let amount:number = 0;
+    const submitCreateAccount: SubmitFunction = ({ form, data, action, cancel }) => {
 
-    const handleSubmit = () => {
-        let newRecord = {"_id": "", "type": type, "account": account, "amount": amount,"date": new Date()}
-    }
+        // TODO: Client side form validation here
+        // const { type, amount } = Object.fromEntries(data);
+		// if (amount < 1) {
+		// 	cancel();
+		// }
+
+		return async ({ result, update }) => {
+			switch (result.type) {
+				case 'success':
+                    console.log("succesful")
+                    let createdAccount:accountType = result.data!.data
+                    accounts.update((accounts) => {
+                        accounts.push(createdAccount)
+                        return accounts
+                    })
+                    break;
+				case 'invalid':
+                    console.log("ERROR")
+					console.log(result.data)
+					break;
+				default:
+					break;
+			}
+			await update();
+		};
+	};
+
 </script>
 
 <div class="add-item flex justify-between space-x-4 outline outline-1 p-2">
-    <form class="flex gap-2" use:enhance action="?/createAccount">
+    <form class="flex gap-2" use:enhance={submitCreateAccount} action="?/createAccount">
         <input type="text" class="outline outline-1 p-2" placeholder="Account name" name="account_name"/>
         <input type="text" class="outline outline-1 p-2" placeholder="Starting balance" name="starting_balance"/>
         <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

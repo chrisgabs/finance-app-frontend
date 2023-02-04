@@ -1,20 +1,25 @@
 import { records, accounts, user } from "../stores/stores"
 import type { Actions, PageServerLoad } from './$types';
-import {fail, redirect} from "@sveltejs/kit"
+import {fail, invalid, redirect} from "@sveltejs/kit"
 import { error } from '@sveltejs/kit';
 import { time_ranges_to_array } from "svelte/internal";
 import { supabase } from "$lib/supabaseClient";
-// /** @type {import('./$types').PageServerLoad} */
-// export async function load() {
-//     // Databaase.fetchRecords() returns a promise. should be .then() instead of try catch
-//     let data = null;    
-// }
+
+// --------- LOAD FUNCTION ---------
 
 export const load = (async ({ locals }) => {
+	if (!locals.session) {
+		return {
+			accounts: [],
+			records: []
+		}
+	}
+	
 	const accounts = await locals.sb.from("fin_accounts").select("id, name, balance")
 	const records = await locals.sb.from("fin_records").select("id, type, amount, account, date_time")
 
 	if (accounts.error){
+		console.log("error")
 		console.log(accounts.error);
 	} else if (records.error){
 		console.log(records.error);
@@ -25,6 +30,8 @@ export const load = (async ({ locals }) => {
 		records: records.data
 	};
 }) satisfies PageServerLoad;
+
+// --------- ACTIONS ---------
 
 export const actions = {
   login: async ({request, locals}) => {
@@ -102,14 +109,14 @@ export const actions = {
 			name: name,
 			balance: balance,
 			owner: locals.session?.user.id
-		})
+		}).select("id, name, balance").limit(1).single()
 
 		if (error) {
-			console.log(error)
+			return invalid(400, {message: error})
 		}
 
 		if (data) {
-			console.log(data)
+			return {data: data}
 		}
 	},
 
@@ -125,14 +132,14 @@ export const actions = {
 			account: account,
 			description: "hotbiggitydog",
 			owner: locals.session?.user.id
-		})
+		}).select("id, type, amount, account, date_time").limit(1).single()
 
 		if (error) {
-			console.log(error)
+			return invalid(400, {message: error})
 		}
 
 		if (data) {
-			console.log(data)
+			return {data: data}
 		}
 	}
 

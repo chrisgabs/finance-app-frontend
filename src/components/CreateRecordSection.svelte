@@ -1,34 +1,41 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
+	import { enhance, type SubmitFunction } from "$app/forms";
+	import type { recordType } from "src/types/record.type";
     import { records } from "../stores/stores";
 
-    const handleSubmit = () => {
-        // let newRecord = {"_id": "", "type": type, "account": account, "amount": amount,"date": new Date()}
-        // Database.addRecord(newRecord).then((res) => {
-        //     // Check if record is created
-        //     if (res.record) {
-        //         records.update((records) => {
-        //             records.push({
-        //                 "_id" : res.record._id,
-        //                 "type": type,
-        //                 "account": account, 
-        //                 "amount": amount,
-        //                 "date": new Date()
-        //             })
-        //             return records
-        //         })
+	const submitCreateRecord: SubmitFunction = ({ form, data, action, cancel }) => {
 
-        //     }else{
-        //         console.log(res)
-        //     }
-        // }).catch((err) => {
-        //     console.log(err)
-        // })
-    }
+        // TODO: Client side form validation here
+        // const { type, amount } = Object.fromEntries(data);
+		// if (amount < 1) {
+		// 	cancel();
+		// }
+
+		return async ({ result, update }) => {
+			switch (result.type) {
+				case 'success':
+                    console.log("succesful")
+                    let createdRecord:recordType = result.data!.data
+                    records.update((records) => {
+                        records.push(createdRecord)
+                        return records
+                    })
+                    break;
+				case 'invalid':
+                    console.log("ERROR")
+					console.log(result.data)
+					break;
+				default:
+					break;
+			}
+			await update();
+		};
+	};
+
 </script>
 
 <div class="add-item flex justify-between space-x-4 outline outline-1 p-2">
-    <form class="flex gap-2" action="?/createRecord" use:enhance>
+    <form class="flex gap-2" action="?/createRecord" use:enhance={submitCreateRecord}>
         <select name="type" id="type" class="outline outline-1 p-2">
             <option value="Food">Food</option>
             <option value="Trasnportation">Trasnportation</option>

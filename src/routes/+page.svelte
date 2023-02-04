@@ -20,15 +20,13 @@
         session: Session | null,
     }
 
-    if (data.session) {
-        console.log(data.records)
-        console.log(data.accounts)
-        
-        if (data.records && data.accounts) {
-            records.set(data.records)
-            accounts.set(data.accounts)
-        }
+    if (data.records && data.accounts) {
+        records.set(data.records)
+        accounts.set(data.accounts)
     }
+
+    // if (data.session) {
+    // }
 
     // let recordsLoading:boolean = true;
 
@@ -48,7 +46,7 @@
 
     <!-- Accounts Section -->
     <div class="accounts-container flex outline-1 outline p-2 space-x-2 overflow-auto no-scrollbar">
-        {#each $accounts as account (account._id)}
+        {#each $accounts as account (account.id)}
             <Account account={account}/>
         {/each}
     </div>
@@ -61,7 +59,7 @@
          </div>
     {/if} -->
 
-    {#each $records as record (record._id)}
+    {#each $records as record (record.id)}
         <Record record={record}/>
     {/each}
 
