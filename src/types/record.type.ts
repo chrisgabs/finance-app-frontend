@@ -3,5 +3,5 @@ export type recordType = {
     type: string, 
     account: string, 
     amount: number,
-    date: Date
+    date_time: Date
 }

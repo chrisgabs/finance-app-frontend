@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { recordType } from "src/types/record.type";
-    import Dropdown from "./Dropdown.svelte";
 
     export let record: recordType ;
 
@@ -14,5 +13,4 @@
     <!-- why this redmarked by intellisense with autocomplete=off-->
     <span>{amount}</span>
     <span>{new Date(date_time).getMonth() + "/" + new Date(date_time).getDate()}</span>
-    <Dropdown id={id}></Dropdown>
 </div>
