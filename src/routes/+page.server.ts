@@ -1,4 +1,4 @@
-import { records, accounts, user } from "../stores/stores"
+import { records, accounts } from "../stores/stores"
 import type { Actions, PageServerLoad } from './$types';
 import {fail, invalid, redirect} from "@sveltejs/kit"
 import { error } from '@sveltejs/kit';
@@ -122,17 +122,21 @@ export const actions = {
 
 	createRecord: async ({request, locals}) => {
 		const body = Object.fromEntries(await request.formData());
-		const type = body.type as string
+		const purpose = body.type as string
 		const account = body.account as string
 		const amount = body.amount as string
+		const note = body.note as string
+		const transaction_type = body.transaction_type as string
+		
 		const {data, error} = await locals.sb.from("fin_records").insert({
-			type: type,
+			purpose: purpose,
+			transaction_type: transaction_type,
 			amount: amount,
 			date_time: new Date(),
 			account: account,
-			description: "hotbiggitydog",
+			description: note,
 			owner: locals.session?.user.id
-		}).select("id, type, amount, account, date_time").limit(1).single()
+		}).select("id, purpose, transaction_type, amount, account, date_time").limit(1).single()
 
 		if (error) {
 			return invalid(400, {message: error})

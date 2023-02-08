@@ -12,8 +12,13 @@
 	import type { accountType } from "src/types/account.type";
 	import type { Session } from "@supabase/supabase-js";
 	import RecordRow from "./RecordRow.svelte";
+	import NewRecordModal from "../components/CreateRecordModal.svelte";
+    import NewAccountModal from "../components/CreateAccountModal.svelte"
+	import AccountStat from "../components/AccountStat.svelte";
 
     export let data: PageData;
+    let createRecordModalCheckbox: HTMLElement;
+    let totalBalance:number;
 
     interface PageData {
         records: recordType[] | null,
@@ -29,18 +34,25 @@
     // if (data.session) {
     // }
 
+    $: {
+        totalBalance = $accounts.reduce((a, b) => a + b.balance, 0)
+    }
+
     // let recordsLoading:boolean = true;
 
     onMount(() => {
-        api.get("accounts", "hatdog").then((res) => console.log(res))
+        // api.get("accounts", "hatdog").then((res) => console.log(res))
     })
 
 </script>
 
 <!-- ---------------------------------- HTML ---------------------------------- -->
+<!-- Type, account, amount, description, date_time, cancel, add-->
+<NewRecordModal/>
+<NewAccountModal/>
 
 <!-- m-auto my-auto max-w-[500px] space-y-2 -->
-<div class="flex-col max-w-[600px] mx-auto my-4 space-y-4">
+<div class="flex-col max-w-[600px] mx-auto space-y-4">
 
     <div class="navbar bg-base-100 mt-4 shadow-xl rounded-box outline outline-2">
         <div class="flex-none">
@@ -58,32 +70,26 @@
     
     <!-- <div class="divider"></div> -->
 
-    <div class="rounded-box outline outline-2 flex overflow-x-auto p-1 no-scrollbar gap-1">
-        <div class="stat bg-sky-100 rounded-bl-xl rounded-tl-xl">
+    <div class="rounded-box outline outline-2 flex justify-start overflow-x-auto p-1 no-scrollbar gap-1">
+        <!-- TODOL Create own stat component -->
+        <div class="stat basis-48 truncate flex-none bg-sky-100 rounded-bl-xl rounded-tl-xl">
             <div class="stat-title">TOTAL</div>
-            <div class="stat-value">89,400</div>
+            <div class="stat-value overflow-clip text-base">{totalBalance.toLocaleString("en-US")}</div>
         </div>
-        <div class="stat bg-pink-100">
-            <div class="stat-title">Bank1</div>
-            <div class="stat-value">89,400</div>
-        </div>
-        <div class="stat bg-lime-100">
-            <div class="stat-title">Bank2</div>
-            <div class="stat-value">89,400</div>
-        </div>
-        <div class="stat">
-            <div class="stat-title">Bank3</div>
-            <div class="stat-value">89,400</div>
-        </div>
-        <div class="stat">
-            <div class="stat-title">Start</div>
-            <div class="stat-value">89,400</div>
+        {#each $accounts as account (account.id)}
+             <AccountStat account={account}/>
+        {/each}
+        <div class="stat items-center flex-none basis-16">
+            <label for="create-account-modal" class="btn btn-outline shadow">+</label>
         </div>
     </div>
 
     <!-- <div class="divider"></div>  -->
 
-    <div class="ml-2 text-xl font-semibold">Records</div>
+    <div class="flex justify-between items-center mx-2">
+        <span class="ml-2 text-xl font-semibold">Records</span>
+        <label for="create-record-modal" class="btn btn-md btn-primary">add</label>
+    </div>
 
     <!-- <span><h3>Records</h3></span> -->
     <!-- <h3>Records</h3> -->

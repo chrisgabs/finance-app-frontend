@@ -1,7 +1,8 @@
 export type recordType = {
     id: number,
-    type: string, 
+    purpose: string, 
     account: string, 
     amount: number,
+    transaction_type: string,
     date_time: Date
 }
