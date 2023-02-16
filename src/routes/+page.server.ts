@@ -1,7 +1,6 @@
 import { records, accounts } from "../stores/stores"
 import type { Actions, PageServerLoad } from './$types';
-import {fail, invalid, redirect} from "@sveltejs/kit"
-import { error } from '@sveltejs/kit';
+import {error, invalid, redirect} from "@sveltejs/kit"
 import { time_ranges_to_array } from "svelte/internal";
 import { supabase } from "$lib/supabaseClient";
 
@@ -16,7 +15,7 @@ export const load = (async ({ locals }) => {
 	}
 	
 	const accounts = await locals.sb.from("fin_accounts").select("id, name, balance")
-	const records = await locals.sb.from("fin_records").select("id, type, amount, account, date_time")
+	const records = await locals.sb.from("fin_records").select("id, purpose, amount, account, date_time, transaction_type")
 
 	if (accounts.error){
 		console.log("error")
@@ -45,7 +44,7 @@ export const actions = {
 
 	if (err) {
 		console.log(err)
-		return fail(500, {
+		return error(500, {
 			message: "Error boi"
 		})
 	}
@@ -57,13 +56,14 @@ export const actions = {
 
   logout: async({request, locals}) => {
 	console.log("logout")
-	const { error: err } = await locals.sb.auth.signOut()
-
-	if (err) {
-	  throw error(500, "Something went wrong logging you out.")
+	const { error } = await locals.sb.auth.signOut()
+	console.log(error)
+	if (error) {
+		console.log("error opccured")
+		throw invalid(500, { message: "Something went wrong logging you out." })
 	}
 
-	throw redirect(303, "/")
+	throw redirect(300, "/login")
   },
 
   register: async({request, locals}) => {
@@ -102,8 +102,8 @@ export const actions = {
 
 	createAccount: async ({request, locals}) => {
 		const body = Object.fromEntries(await request.formData());
-		const name = body.account_name as string
-		const balance = body.starting_balance as string
+		const name = body.name as string
+		const balance = body.balance as string
 		console.log(name, balance)
 		const {data, error} = await locals.sb.from("fin_accounts").insert({
 			name: name,
@@ -122,7 +122,7 @@ export const actions = {
 
 	createRecord: async ({request, locals}) => {
 		const body = Object.fromEntries(await request.formData());
-		const purpose = body.type as string
+		const purpose = body.purpose as string
 		const account = body.account as string
 		const amount = body.amount as string
 		const note = body.note as string

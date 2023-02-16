@@ -1,13 +1,6 @@
 <script lang="ts">
-    import Account from "../components/Account.svelte";
     import { records, accounts } from "../stores/stores"
-    import  Record from "../components/Record.svelte";
-    import CreateRecordSection from "../components/CreateRecordSection.svelte";
-    import LoginSection from "../components/LoginSection/index.svelte";
 	import { onMount } from "svelte";
-	import type { PageData } from "./$types";
-    import * as api from '$lib/api';
-	import CreateAccountSection from "../components/CreateAccountSection.svelte";
 	import type { recordType } from "src/types/record.type";
 	import type { accountType } from "src/types/account.type";
 	import type { Session } from "@supabase/supabase-js";
@@ -15,6 +8,8 @@
 	import NewRecordModal from "../components/CreateRecordModal.svelte";
     import NewAccountModal from "../components/CreateAccountModal.svelte"
 	import AccountStat from "../components/AccountStat.svelte";
+	import { enhance, type SubmitFunction } from "$app/forms";
+	import { goto } from "$app/navigation";
 
     export let data: PageData;
     let createRecordModalCheckbox: HTMLElement;
@@ -27,12 +22,19 @@
     }
 
     // if (data.records && data.accounts) {
-    //     records.set(data.records)
-    //     accounts.set(data.accounts)
+        // records.set(data.records)
+        // accounts.set(data.accounts)
     // }
 
-    // if (data.session) {
-    // }
+    if (data.session) {
+        // settings stores
+        // console.log(data.session)
+        console.log("there is a session -------")
+        records.set(data.records!)
+        accounts.set(data.accounts!)
+    }
+    console.log(data.records)
+    console.log(data.accounts)
 
     $: {
         totalBalance = $accounts.reduce((a, b) => a + b.balance, 0)
@@ -43,6 +45,30 @@
     onMount(() => {
         // api.get("accounts", "hatdog").then((res) => console.log(res))
     })
+
+    const logoutEnhancement: SubmitFunction = ({ form, data, action, cancel }) => {
+
+    // TODO: Client side form validation here
+    // data.append("transaction_type", tabs[activeTab])
+    // const objects = Object.fromEntries(data);
+
+    return async ({ result, update }) => {
+        switch (result.type) {
+            case 'success':
+                console.log("case: log out succesful")
+                goto("/login")
+                break;
+            case 'invalid':
+                console.log("ERROR")
+                console.log(result.data)
+                break;
+            default:
+                break;
+        }
+        await update();
+    };
+
+};
 
 </script>
 
@@ -61,11 +87,11 @@
             </button>
         </div>
         <div class="flex-1">
-            <a class="btn btn-ghost normal-case text-xl">Finance-App</a>
+            <a href="/" class="btn btn-ghost normal-case text-xl">Finance-App</a>
         </div>
-        <div class="navbar-end">
-            <a class="btn">Login</a>
-        </div>
+        <form class="navbar-end" use:enhance={logoutEnhancement}>
+            <button formaction="?/logout" class="btn hover:bg-accent hover:outline-0">Logout</button>
+        </form>
     </div>
     
     <!-- <div class="divider"></div> -->
@@ -135,7 +161,7 @@
     {/each} -->
 
 </div>
-
+<!-- 
 <style>
     @tailwind components;
 
@@ -151,4 +177,4 @@
             scrollbar-width: none;  /* Firefox */
         }
     }
-</style>
+</style> -->

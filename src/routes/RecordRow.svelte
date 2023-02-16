@@ -2,12 +2,12 @@
 	import type { recordType } from "src/types/record.type";
 
     export let record:recordType
-    const {id, type, account, amount, date_time} = record
+    const {id, purpose, account, amount, date_time} = record
 </script>
 
 <tr class="hover">
     <th>{id}</th>
-    <td>{type}</td>
+    <td>{purpose}</td>
     <td>{account}</td>
     <td>{amount}</td>
 </tr>
