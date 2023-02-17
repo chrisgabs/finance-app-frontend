@@ -14,6 +14,8 @@
 	]
 	let activeTab = 1
 
+    let loading = false;
+
     let types:string[] = ["food", "transportation", "other"]
     let accountNames:string[] = []
     $accounts.forEach(element => {
@@ -30,8 +32,10 @@
         // TODO: Client side form validation here
         data.append("transaction_type", tabs[activeTab])
         // const objects = Object.fromEntries(data);
+        loading = true;
 
 		return async ({ result, update }) => {
+            loading = false;
 			switch (result.type) {
 				case 'success':
                     console.log("succesful")
@@ -59,36 +63,36 @@
 <!-- Type, account, amount, description, date_time, cancel, add-->
 <label class="modal" for="create-record-modal">
     <label class="modal-box flex flex-col gap-4 items-center" for="">
-        <h3 class="font-bold text-lg">Add Record</h3>
+        <h3 class="font-bold text-lg">Add Financial Record</h3>
 
         <form action="?/createRecord" class="input-container flex flex-col gap-2" use:enhance={submitCreateRecord}>
             <div class="tabs tabs-boxed justify-center">
                 {#each tabs as tab, index}
-                    <button type="button" class="tab tab-active" class:tab-active={activeTab == index} on:click={()=>activeTab = index}>{tab}</button>
+                    <button disabled={loading} type="button" class="tab tab-active" class:tab-active={activeTab == index && !loading} on:click={()=>activeTab = index}>{tab}</button>
                 {/each}
             </div>
 
-            <select name="account" class="select select-bordered w-full max-w-xs">
+            <select disabled={loading} name="account" class="select select-bordered w-full max-w-xs">
                 <option disabled selected>Account</option>
                 {#each accountNames as name}
                      <option>{name}</option>
                 {/each}
             </select>
             
-            <input type="text" name="amount" placeholder="Amount" class="input input-bordered w-full max-w-xs" />
+            <input disabled={loading} type="text" name="amount" placeholder="Amount" class="input input-bordered w-full max-w-xs" />
 
-            <select name="purpose" class="select select-bordered w-full max-w-xs">
+            <select disabled={loading} name="purpose" class="select select-bordered w-full max-w-xs">
                 <option disabled selected>Purpose</option>
                 {#each types as type}
                      <option>{type}</option>
                 {/each}
             </select>
 
-            <textarea name="note" class="textarea textarea-bordered" placeholder="Note"></textarea>
+            <textarea disabled={loading} name="note" class="textarea textarea-bordered" placeholder="Note"></textarea>
 
             <div class="modal-action my-0 mt-3 justify-center">
                 <button type="button" on:click={() => createRecordModalCheckbox.click()} class="btn btn-error">Cancel</button>
-                <button class="btn btn-primary">Add Record</button>
+                <button disabled={loading} class="btn btn-primary">Add Record</button>
             </div>
         </form>
 
