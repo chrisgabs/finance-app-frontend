@@ -10,9 +10,10 @@
 	import AccountStat from "../components/AccountStat.svelte";
 	import { enhance, type SubmitFunction } from "$app/forms";
 	import { goto } from "$app/navigation";
+	import EditRecordModal from "../components/EditRecordModal.svelte";
 
     export let data: PageData;
-    let createRecordModalCheckbox: HTMLElement;
+    // let editModal:HTMLElement;
     let totalBalance:number;
 
     interface PageData {
@@ -26,12 +27,15 @@
         // accounts.set(data.accounts)
     // }
 
+    console.log("refreshed")
     if (data.session) {
         // settings stores
         // console.log(data.session)
         console.log("there is a session -------")
         records.set(data.records!)
         accounts.set(data.accounts!)
+    }else {
+        console.log("no session :(")
     }
     console.log(data.records)
     console.log(data.accounts)
@@ -74,20 +78,25 @@
 
 <!-- ---------------------------------- HTML ---------------------------------- -->
 <!-- Type, account, amount, description, date_time, cancel, add-->
+<EditRecordModal/>
 <NewRecordModal/>
 <NewAccountModal/>
 
 <!-- m-auto my-auto max-w-[500px] space-y-2 -->
 <div class="flex-col max-w-[600px] mx-auto space-y-4">
 
-    <div class="navbar bg-base-100 mt-4 shadow-xl rounded-box outline outline-2">
+    <div class="navbar bg-base-100 mt-4 rounded-box outline outline-1">
         <div class="flex-none">
             <button class="btn btn-square btn-ghost">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
         <div class="flex-1">
-            <a href="/" class="btn btn-ghost normal-case text-xl">Finance-App</a>
+            {#if data.session}
+                <a href="/" class="btn btn-ghost normal-case text-xl">Hello, {data.session.user.user_metadata.first_name}</a>
+            {:else}
+                <a href="/" class="btn btn-ghost normal-case text-xl">Finance-App</a>
+            {/if}
         </div>
         <form class="navbar-end" use:enhance={logoutEnhancement}>
             <button formaction="?/logout" class="btn hover:bg-accent hover:outline-0">Logout</button>
@@ -96,7 +105,7 @@
     
     <!-- <div class="divider"></div> -->
 
-    <div class="rounded-box outline outline-2 flex justify-start overflow-x-auto p-1 no-scrollbar gap-1">
+    <div class="rounded-box outline outline-1 flex justify-start overflow-x-auto p-1 no-scrollbar gap-1">
         <!-- TODOL Create own stat component -->
         <div class="stat basis-48 truncate flex-none bg-sky-100 rounded-bl-xl rounded-tl-xl">
             <div class="stat-title">TOTAL</div>
@@ -120,7 +129,7 @@
     <!-- <span><h3>Records</h3></span> -->
     <!-- <h3>Records</h3> -->
 
-    <table class="table w-full outline outline-2 rounded-lg mt-0">
+    <table class="table w-full outline outline-1 rounded-lg mt-0">
         <!-- head -->
         <thead>
         <tr>

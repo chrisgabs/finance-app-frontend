@@ -8,10 +8,9 @@ type sendParams = {
     method: string,
     path: string,
     data?: JSON,
-    token: string
 }
 
-async function send({ method, path, data, token }: sendParams) {
+async function send({ method, path, data }: sendParams) {
 	const opts:any = { method, headers: {} };
 
 	if (data) {
@@ -19,9 +18,9 @@ async function send({ method, path, data, token }: sendParams) {
 		opts.body = JSON.stringify(data);
 	}
 
-	if (token) {
-		opts.headers['Authorization'] = `Token ${token}`;
-	}
+	// if (token) {
+	// 	opts.headers['Authorization'] = `Token ${token}`;
+	// }
 
 	const res = await fetch(`${base}/${path}`, opts);
 	if (res.ok || res.status === 422) {
@@ -32,18 +31,18 @@ async function send({ method, path, data, token }: sendParams) {
 	throw error(res.status);
 }
 
-export function get(path:string, token:string) {
-	return send({ method: 'GET', path, token });
+export function get(path:string) {
+	return send({ method: 'GET', path});
 }
 
-export function del(path:string, token:string) {
-	return send({ method: 'DELETE', path, token });
+export function del(path:string) {
+	return send({ method: 'DELETE', path });
 }
 
-export function post(path:string, data:JSON, token:string) {
-	return send({ method: 'POST', path, data, token });
+export function post(path:string, data:JSON) {
+	return send({ method: 'POST', path, data});
 }
 
-export function put(path:string, data:JSON, token:string) {
-	return send({ method: 'PUT', path, data, token });
+export function put(path:string, data:JSON) {
+	return send({ method: 'PUT', path, data});
 }

@@ -5,10 +5,6 @@ type Notification = {
     status: boolean
 }
 
-let notif:Notification = {
-    message: "transaction succesful", status: true
-}
-
 export const notifications = writable<Notification[]>([
     // { message: "transaction succesful", status: true },
     // { message: "unsuccessful transaction", status: false },

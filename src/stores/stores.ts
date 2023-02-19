@@ -23,6 +23,9 @@ export const accounts = writable<accountType[]>([
     // { _id: '6', name: 'Metrobank', amount: 2849, color: '#f44336' },
 ]);
 
+export const selectedRecord = writable<recordType>({
+    id: -1, transaction_type: "", purpose: "", account: "", amount: -1, date_time: new Date()
+})
 // export const user = writable<userType>({
 //     id: '',
 //     name: '',

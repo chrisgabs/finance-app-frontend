@@ -18,7 +18,7 @@
 
     let loading = false;
 
-    let types:string[] = ["food", "transportation", "other"]
+    let types:string[] = ["Food", "Transportation", "Other"]
     let accountNames:string[] = []
     $accounts.forEach(element => {
         accountNames.push(element.name)

@@ -8,11 +8,14 @@ import { supabase } from "$lib/supabaseClient";
 
 export const load = (async ({ locals }) => {
 	if (!locals.session) {
+		console.log("THERE IS A SESSION SERVER SIDE")
 		return {
 			accounts: [],
 			records: []
 		}
 	}
+
+	console.log("there is no session, server side")
 	
 	const accounts = await locals.sb.from("fin_accounts").select("id, name, balance")
 	const records = await locals.sb.from("fin_records").select("id, purpose, amount, account, date_time, transaction_type")
@@ -144,6 +147,22 @@ export const actions = {
 
 		if (data) {
 			return {data: data}
+		}
+	},
+
+	deleteRecord: async ({ request, locals }) => {
+		const body = Object.fromEntries(await request.formData());
+		const id = body.id as string
+
+		const { data, error } = await locals.sb.from("fin_records")
+			.delete().eq("id", id)
+
+		if (error) {
+			return invalid(400, { message: error })
+		}
+
+		if (data) {
+			return { data: data }
 		}
 	}
 
