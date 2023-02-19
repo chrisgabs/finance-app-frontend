@@ -5,6 +5,7 @@
     import { onMount } from 'svelte'
     import { page } from '$app/stores'
 	import type { Session } from "@supabase/supabase-js";
+	import Toast from "../components/Toast.svelte";
 
   let session:Session|null = null;
   onMount(async () => {
@@ -69,5 +70,6 @@
 </script>
 
 <!-- <div class=""> -->
+<Toast/>
 <slot />
 <!-- </div> -->

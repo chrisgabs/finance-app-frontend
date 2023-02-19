@@ -3,6 +3,8 @@
 	import type { recordType } from "src/types/record.type";
 	import { onMount } from "svelte";
     import { accounts, records } from "../stores/stores"
+    import { toast } from '../stores/notification'
+
 
     let createRecordModalCheckbox: HTMLElement
     // createRecordModalCheckbox.click()
@@ -44,10 +46,12 @@
                         records.push(createdRecord)
                         return records
                     })
+                    toast("records succesfully added", true)
                     break;
 				case 'invalid':
                     console.log("ERROR")
 					console.log(result.data)
+                    toast("error in adding record", false)
 					break;
 				default:
 					break;
@@ -61,7 +65,7 @@
 
 <input type="checkbox" id="create-record-modal" class="modal-toggle" bind:this={createRecordModalCheckbox}/>
 <!-- Type, account, amount, description, date_time, cancel, add-->
-<label class="modal" for="create-record-modal">
+<label class="modal z-40" for="create-record-modal">
     <label class="modal-box flex flex-col gap-4 items-center" for="">
         <h3 class="font-bold text-lg">Add Financial Record</h3>
 

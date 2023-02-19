@@ -60,7 +60,7 @@
 
 <input type="checkbox" id="create-account-modal" class="modal-toggle" bind:this={createAccountCheckbox}/>
 <!-- Type, account, amount, description, date_time, cancel, add-->
-<label class="modal" for="create-account-modal">
+<label class="modal z-40" for="create-account-modal">
     <label class="modal-box flex flex-col gap-4 items-center" for="">
         <h3 class="font-bold text-lg">Create Financial Account</h3>
 
