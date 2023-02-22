@@ -43,7 +43,7 @@
                     console.log("succesful")
                     let createdRecord:recordType = result.data!.data
                     records.update((records) => {
-                        records.push(createdRecord)
+                        records.unshift(createdRecord)
                         return records
                     })
                     toast("records succesfully added", true)

@@ -18,7 +18,9 @@ export const load = (async ({ locals }) => {
 	
 	// console.log("THERE IS A SESSION SERVER SIDE")
 	const accountsData = await locals.sb.from("fin_accounts").select("id, name, balance")
-	const receivedRecords = await locals.sb.from("fin_records").select("id, purpose, amount, account, date_time, transaction_type")
+	const receivedRecords = await locals.sb.from("fin_records")
+		.select("id, purpose, amount, account, date_time, transaction_type")
+		.order("date_time", {ascending: false})
 
 	
 	if (accountsData.error){
