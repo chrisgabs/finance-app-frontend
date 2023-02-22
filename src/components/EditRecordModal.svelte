@@ -68,29 +68,7 @@
                     console.log("succesful")
                     let edittedRecord:recordType = result.data!.data
                     let newVals:recordType[];
-                    records.update((records) => {
-                        // console.log("from database:")
-                        // console.log(edittedRecord)
-                        for (let i = 0 ; i < records.length; i++) {
-                            // console.log("found editted:")
-                            // console.log(records[i])
-                            if (records[i].id == edittedRecord.id) {
-                                let newRecord:recordType = {    
-                                    id: edittedRecord.id,                                
-                                    account : edittedRecord.account,
-                                    amount : edittedRecord.amount,
-                                    date_time : edittedRecord.date_time,
-                                    purpose : edittedRecord.purpose,
-                                    transaction_type : edittedRecord.transaction_type,
-                                }
-                                records[i] = newRecord
-                                break;
-                            }
-                        }
-                        // console.log("after editting");
-                        // newVals = records;
-                        return records
-                    })
+                    records.edit(edittedRecord)
                     // console.log("new values:")
                     // console.log(newVals!)
                     // records.set(newVals!)

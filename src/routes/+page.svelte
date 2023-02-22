@@ -143,7 +143,7 @@
         </tr>
         </thead>
         <tbody>
-            {#each $records as record (record.id)}
+            {#each $records as record (record.key)}
                 <RecordRow record={record}/>
             {/each}
         </tbody>

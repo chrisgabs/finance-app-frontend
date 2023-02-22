@@ -4,5 +4,6 @@ export type recordType = {
     account: string, 
     amount: number,
     transaction_type: string,
-    date_time: Date
+    date_time: Date,
+    key: number
 }

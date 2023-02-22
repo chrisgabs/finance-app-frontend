@@ -2,6 +2,8 @@ import { records, accounts } from "../stores/stores"
 import type { Actions, PageServerLoad } from './$types';
 import {error, invalid, redirect} from "@sveltejs/kit"
 import { supabase } from "$lib/supabaseClient";
+import { writable } from "svelte/store";
+import type { recordType } from "src/types/record.type";
 
 // --------- LOAD FUNCTION ---------
 
@@ -15,20 +17,29 @@ export const load = (async ({ locals }) => {
 	}
 	
 	// console.log("THERE IS A SESSION SERVER SIDE")
-	
-	const accounts = await locals.sb.from("fin_accounts").select("id, name, balance")
-	const records = await locals.sb.from("fin_records").select("id, purpose, amount, account, date_time, transaction_type")
+	const accountsData = await locals.sb.from("fin_accounts").select("id, name, balance")
+	const receivedRecords = await locals.sb.from("fin_records").select("id, purpose, amount, account, date_time, transaction_type")
 
-	if (accounts.error){
+	
+	if (accountsData.error){
 		console.log("error")
-		console.log(accounts.error);
-	} else if (records.error){
-		console.log(records.error);
+		console.log(accountsData.error);
+	} else if (receivedRecords.error){
+		console.log(receivedRecords.error);
+	}
+	
+	let records: recordType[] = []
+	let recordsData = receivedRecords.data
+	for (let i = 0; i < recordsData!.length; i++) {
+		const {id, purpose, amount, account, date_time, transaction_type} = recordsData![i]
+		records.push({
+			id, purpose, amount, account, date_time, transaction_type, key:id
+		})
 	}
 
 	return {
-		accounts: accounts.data,
-		records: records.data
+		accounts: accountsData.data,
+		records: records
 	};
 }) satisfies PageServerLoad;
 
@@ -140,12 +151,17 @@ export const actions = {
 			owner: locals.session?.user.id
 		}).select("id, purpose, transaction_type, amount, account, date_time").limit(1).single()
 
+		
 		if (error) {
 			return invalid(400, {message: error})
 		}
-
+		
 		if (data) {
-			return {data: data}
+			const {id, purpose, transaction_type, amount, account, date_time} = data
+			let createdRecord:recordType = {
+				id, purpose, transaction_type, amount, account, date_time, key: id
+			}
+			return {data: createdRecord}
 		}
 	},
 
