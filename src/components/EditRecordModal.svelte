@@ -6,7 +6,6 @@
     import { toast } from '../stores/notification'
     import {get} from "../lib/api"
 
-
     let editRecordModalCheckbox: HTMLInputElement
     let accountsComboBox: HTMLSelectElement
     let purposeComboBox: HTMLSelectElement
@@ -34,8 +33,8 @@
     const submitEditRecord: SubmitFunction = ({ form, data, action, cancel }) => {
 
         loading = true;
+        data.append("id", currentId.toString())
         if (action.search === "?/deleteRecord") {
-            data.append("id", currentId.toString())
             return async ({ result, update }) => {
                 switch (result.type) {
                     case 'success':
@@ -67,17 +66,41 @@
 			switch (result.type) {
 				case 'success':
                     console.log("succesful")
-                    let createdRecord:recordType = result.data!.data
+                    let edittedRecord:recordType = result.data!.data
+                    let newVals:recordType[];
                     records.update((records) => {
-                        records.push(createdRecord)
+                        // console.log("from database:")
+                        // console.log(edittedRecord)
+                        for (let i = 0 ; i < records.length; i++) {
+                            // console.log("found editted:")
+                            // console.log(records[i])
+                            if (records[i].id == edittedRecord.id) {
+                                let newRecord:recordType = {    
+                                    id: edittedRecord.id,                                
+                                    account : edittedRecord.account,
+                                    amount : edittedRecord.amount,
+                                    date_time : edittedRecord.date_time,
+                                    purpose : edittedRecord.purpose,
+                                    transaction_type : edittedRecord.transaction_type,
+                                }
+                                records[i] = newRecord
+                                break;
+                            }
+                        }
+                        // console.log("after editting");
+                        // newVals = records;
                         return records
                     })
-                    toast("records succesfully added", true)
+                    // console.log("new values:")
+                    // console.log(newVals!)
+                    // records.set(newVals!)
+                    // $records = newVals!
+                    toast("record succesfully editted", true)
                     break;
 				case 'invalid':
                     console.log("ERROR")
 					console.log(result.data)
-                    toast("error in adding record", false)
+                    toast("error in editting record", false)
 					break;
 				default:
 					break;

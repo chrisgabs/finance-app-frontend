@@ -16,6 +16,10 @@
     // let editModal:HTMLElement;
     let totalBalance:number;
 
+    $: if ($records) {
+        console.log("records are updated -----------")
+    }
+
     interface PageData {
         records: recordType[] | null,
         accounts: accountType[] | null,
@@ -31,15 +35,12 @@
     if (data.session) {
         // settings stores
         // console.log(data.session)
-        console.log("there is a session -------")
+        // console.log("there is a session client side")
         records.set(data.records!)
         accounts.set(data.accounts!)
     }else {
-        console.log("no session :(")
+        // console.log("no session client side :(")
     }
-    console.log(data.records)
-    console.log(data.accounts)
-
     $: {
         totalBalance = $accounts.reduce((a, b) => a + b.balance, 0)
     }
@@ -48,6 +49,7 @@
 
     onMount(() => {
         // api.get("accounts", "hatdog").then((res) => console.log(res))
+        console.log(document.cookie)
     })
 
     const logoutEnhancement: SubmitFunction = ({ form, data, action, cancel }) => {
@@ -55,6 +57,7 @@
     // TODO: Client side form validation here
     // data.append("transaction_type", tabs[activeTab])
     // const objects = Object.fromEntries(data);
+    
 
     return async ({ result, update }) => {
         switch (result.type) {
@@ -83,7 +86,7 @@
 <NewAccountModal/>
 
 <!-- m-auto my-auto max-w-[500px] space-y-2 -->
-<div class="flex-col max-w-[600px] mx-auto space-y-4">
+<div class="flex-col max-w-[600px] mx-5 sm:mx-auto space-y-4">
 
     <div class="navbar bg-base-100 mt-4 rounded-box outline outline-1">
         <div class="flex-none">
@@ -129,7 +132,7 @@
     <!-- <span><h3>Records</h3></span> -->
     <!-- <h3>Records</h3> -->
 
-    <table class="table w-full outline outline-1 rounded-lg mt-0">
+    <table class="table w-full outline outline-1 rounded-lg m-0 p-0">
         <!-- head -->
         <thead>
         <tr>

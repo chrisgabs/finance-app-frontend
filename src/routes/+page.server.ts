@@ -1,21 +1,20 @@
 import { records, accounts } from "../stores/stores"
 import type { Actions, PageServerLoad } from './$types';
 import {error, invalid, redirect} from "@sveltejs/kit"
-import { time_ranges_to_array } from "svelte/internal";
 import { supabase } from "$lib/supabaseClient";
 
 // --------- LOAD FUNCTION ---------
 
 export const load = (async ({ locals }) => {
 	if (!locals.session) {
-		console.log("THERE IS A SESSION SERVER SIDE")
+		// console.log("there is no session, server side")
 		return {
 			accounts: [],
 			records: []
 		}
 	}
-
-	console.log("there is no session, server side")
+	
+	// console.log("THERE IS A SESSION SERVER SIDE")
 	
 	const accounts = await locals.sb.from("fin_accounts").select("id, name, balance")
 	const records = await locals.sb.from("fin_records").select("id, purpose, amount, account, date_time, transaction_type")
@@ -156,6 +155,35 @@ export const actions = {
 
 		const { data, error } = await locals.sb.from("fin_records")
 			.delete().eq("id", id)
+
+		if (error) {
+			return invalid(400, { message: error })
+		}
+
+		if (data) {
+			return { data: data }
+		}
+	},
+	
+		editRecord: async ({ request, locals }) => {
+		const body = Object.fromEntries(await request.formData());
+		const id = body.id as string
+		const purpose = body.purpose as string
+		const account = body.account as string
+		const amount = body.amount as string
+		const note = body.note as string
+		const transaction_type = body.transaction_type as string
+
+		const { data, error } = await locals.sb.from("fin_records")
+			.update({
+				amount: amount, 
+				account: account, 
+				description: note, 
+				transaction_type: transaction_type, 
+				purpose: purpose})
+			.eq("id", id)
+			.select("id, purpose, transaction_type, amount, account, date_time")
+			.single()
 
 		if (error) {
 			return invalid(400, { message: error })
