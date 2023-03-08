@@ -34,6 +34,7 @@
 
         loading = true;
         data.append("id", currentId.toString())
+
         if (action.search === "?/deleteRecord") {
             return async ({ result, update }) => {
                 switch (result.type) {
@@ -58,6 +59,8 @@
         }
         // TODO: Client side form validation here
         data.append("transaction_type", tabs[activeTab])
+        const accountId = $accounts.find((account) => account.name == data.get("account"))?.id
+        data.set("account", accountId!.toString())
         // const objects = Object.fromEntries(data);
 
         // handle edit submit here
@@ -103,10 +106,10 @@
         currentId = $selectedRecord.id
 
         get(`records?id=${currentId}`).then(({data}) => {
-            const {account, amount, date_time, description, purpose, transaction_type} = data
+            const {account_id, amount, date_time, description, purpose, transaction_type} = data
             
             activeTab = tabs.indexOf(transaction_type);
-            accountsComboBox.value = account
+            accountsComboBox.value = $accounts.find((account) => account.id == account_id)?.name!
             purposeComboBox.value = purpose
             notes = description
             record_amount = amount

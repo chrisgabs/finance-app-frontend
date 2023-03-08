@@ -11,6 +11,7 @@
 	import { enhance, type SubmitFunction } from "$app/forms";
 	import { goto } from "$app/navigation";
 	import EditRecordModal from "../components/EditRecordModal.svelte";
+	import EditAccountModal from "../components/EditAccountModal.svelte";
 
     export let data: PageData;
     // let editModal:HTMLElement;
@@ -82,6 +83,7 @@
 <!-- ---------------------------------- HTML ---------------------------------- -->
 <!-- Type, account, amount, description, date_time, cancel, add-->
 <EditRecordModal/>
+<EditAccountModal/>
 <NewRecordModal/>
 <NewAccountModal/>
 
@@ -114,7 +116,7 @@
             <div class="stat-title">TOTAL</div>
             <div class="stat-value overflow-clip text-base">{totalBalance.toLocaleString("en-US")}</div>
         </div>
-        {#each $accounts as account (account.id)}
+        {#each $accounts as account (account.key)}
              <AccountStat account={account}/>
         {/each}
         <div class="stat items-center flex-none basis-16">

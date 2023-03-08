@@ -4,6 +4,7 @@ import {error, invalid, redirect} from "@sveltejs/kit"
 import { supabase } from "$lib/supabaseClient";
 import { writable } from "svelte/store";
 import type { recordType } from "src/types/record.type";
+import type { accountType } from "src/types/account.type";
 
 // --------- LOAD FUNCTION ---------
 
@@ -17,30 +18,46 @@ export const load = (async ({ locals }) => {
 	}
 	
 	// console.log("THERE IS A SESSION SERVER SIDE")
-	const accountsData = await locals.sb.from("fin_accounts").select("id, name, balance")
+	// Get accounts and records from database
+	const receivedData = await locals.sb.from("fin_accounts").select("id, name, balance")
 	const receivedRecords = await locals.sb.from("fin_records")
-		.select("id, purpose, amount, account, date_time, transaction_type")
+		.select("id, purpose, amount, account_id, date_time, transaction_type")
 		.order("date_time", {ascending: false})
 
-	
-	if (accountsData.error){
-		console.log("error")
-		console.log(accountsData.error);
-	} else if (receivedRecords.error){
-		console.log(receivedRecords.error);
-	}
-	
-	let records: recordType[] = []
-	let recordsData = receivedRecords.data
-	for (let i = 0; i < recordsData!.length; i++) {
-		const {id, purpose, amount, account, date_time, transaction_type} = recordsData![i]
-		records.push({
-			id, purpose, amount, account, date_time, transaction_type, key:id
-		})
-	}
+		
+		// Check for errors
+		if (receivedData.error){
+			console.log("error")
+			console.log(receivedData.error);
+		} else if (receivedRecords.error){
+			console.log(receivedRecords.error);
+		}
+		
+		// Records PostgresReponse to Array
+		let records: recordType[] = []
+		let recordsData = receivedRecords.data
+		let accounts: accountType[] = []
+		let accountsData = receivedData.data
+
+		for (let i = 0; i < recordsData!.length; i++) {
+			const {id, purpose, amount, account_id, date_time, transaction_type} = recordsData![i]
+			// Get account names associated with record
+			const account_name = accountsData!.find((record) => record.id == account_id)?.name
+			records.push({
+				id, purpose, amount, account_id, date_time, transaction_type, key:id, account_name
+			})
+		}
+
+		for (let i = 0; i < accountsData!.length; i++) {
+			const { id, name, balance } = accountsData![i]
+			accounts.push({
+				id, name, balance , key: id
+			})
+		}
+
 
 	return {
-		accounts: accountsData.data,
+		accounts: accounts,
 		records: records
 	};
 }) satisfies PageServerLoad;
@@ -148,10 +165,10 @@ export const actions = {
 			transaction_type: transaction_type,
 			amount: amount,
 			date_time: new Date(),
-			account: account,
+			account_id: account,
 			description: note,
 			owner: locals.session?.user.id
-		}).select("id, purpose, transaction_type, amount, account, date_time").limit(1).single()
+		}).select("id, purpose, transaction_type, amount, account_id, date_time").limit(1).single()
 
 		
 		if (error) {
@@ -159,9 +176,9 @@ export const actions = {
 		}
 		
 		if (data) {
-			const {id, purpose, transaction_type, amount, account, date_time} = data
+			const {id, purpose, transaction_type, amount, account_id, date_time} = data
 			let createdRecord:recordType = {
-				id, purpose, transaction_type, amount, account, date_time, key: id
+				id, purpose, transaction_type, amount, account_id, date_time, key: id
 			}
 			return {data: createdRecord}
 		}
@@ -183,7 +200,7 @@ export const actions = {
 		}
 	},
 	
-		editRecord: async ({ request, locals }) => {
+	editRecord: async ({ request, locals }) => {
 		const body = Object.fromEntries(await request.formData());
 		const id = body.id as string
 		const purpose = body.purpose as string
@@ -195,12 +212,12 @@ export const actions = {
 		const { data, error } = await locals.sb.from("fin_records")
 			.update({
 				amount: amount, 
-				account: account, 
+				account_id: account, 
 				description: note, 
 				transaction_type: transaction_type, 
 				purpose: purpose})
 			.eq("id", id)
-			.select("id, purpose, transaction_type, amount, account, date_time")
+			.select("id, purpose, transaction_type, amount, account_id, date_time")
 			.single()
 
 		if (error) {
@@ -210,6 +227,52 @@ export const actions = {
 		if (data) {
 			return { data: data }
 		}
-	}
+	},
+
+	deleteAccount: async ({ request, locals }) => {
+		const body = Object.fromEntries(await request.formData());
+		const name = body.name as string
+
+		const { data, error } = await locals.sb.from("fin_accounts")
+			.delete().eq("name", name)
+
+		if (error) {
+			return invalid(400, { message: error })
+		}
+
+		if (data) {
+			return { data: data }
+		}
+	},
+
+	editAccount: async ({ request, locals }) => {
+		const body = Object.fromEntries(await request.formData());
+		const name = body.name as string
+		const newName = body.newName as string
+		const balance = body.balance as string
+
+		console.log(name)
+		console.log(newName)
+		console.log(balance)
+
+		const { data, error } = await locals.sb.from("fin_accounts")
+			.update({
+				name: newName,
+				balance: balance
+			})
+			.eq("name", name)
+			.select("name, balance, id")
+			.single()
+
+		if (error) {
+			return invalid(400, { message: error })
+		}
+
+		if (data) {
+			return { data: data }
+		}
+	},
+
+
 
 } satisfies Actions;

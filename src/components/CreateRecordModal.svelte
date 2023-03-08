@@ -4,6 +4,7 @@
 	import { onMount } from "svelte";
     import { accounts, records } from "../stores/stores"
     import { toast } from '../stores/notification'
+	import { stringify } from "postcss";
 
 
     let createRecordModalCheckbox: HTMLElement
@@ -33,6 +34,9 @@
 
         // TODO: Client side form validation here
         data.append("transaction_type", tabs[activeTab])
+        const accountName = data.get("account")
+        const accountId = $accounts.find((account) => account.name == accountName)?.id
+        data.set("account", accountId!.toString())
         // const objects = Object.fromEntries(data);
         loading = true;
 
@@ -42,6 +46,8 @@
 				case 'success':
                     console.log("succesful")
                     let createdRecord:recordType = result.data!.data
+                    createdRecord.account_name = accountName as string
+                    console.log(createdRecord)
                     records.update((records) => {
                         records.unshift(createdRecord)
                         return records

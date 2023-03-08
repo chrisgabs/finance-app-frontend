@@ -4,19 +4,18 @@ import { error } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import type { RequestHandler } from './$types';
 
-export const GET = (( request:RequestEvent ) => {
-	const url = request.url
-	const min = Number(url.searchParams.get('min') ?? '0');
-	const max = Number(url.searchParams.get('max') ?? '1');
+export const GET = (async ({ locals, url }) => {
 
-	const d = max - min;
+	const name:string = url.searchParams.get('name') ?? ''
 
-	if (isNaN(d) || d < 0) {
-	throw error(400, 'min and max must be numbers, and min must be less than max');
+	const { error, data } = await locals.sb.from("fin_accounts").select().eq("name", name).limit(1).single()
+	console.log("queried data for name " + name + ":")
+	console.log(data)
+
+	if (error) {
+		return new Response(JSON.stringify({ error: error }))
 	}
 
-	const random = min + Math.random() * d;
+	return new Response(JSON.stringify({ data: data }))
 
-	return new Response(JSON.stringify({data: String(random)}));
-
-})satisfies RequestHandler;
+}) satisfies RequestHandler;
