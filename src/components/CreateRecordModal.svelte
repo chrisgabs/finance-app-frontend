@@ -20,15 +20,6 @@
     let loading = false;
 
     let types:string[] = ["Food", "Transportation", "Other"]
-    let accountNames:string[] = []
-    $accounts.forEach(element => {
-        accountNames.push(element.name)
-    });
-
-
-	onMount(() => {
-		// console.log($accounts)
-	});
 
     const submitCreateRecord: SubmitFunction = ({ form, data, action, cancel }) => {
 
@@ -48,10 +39,11 @@
                     let createdRecord:recordType = result.data!.data
                     createdRecord.account_name = accountName as string
                     console.log(createdRecord)
-                    records.update((records) => {
-                        records.unshift(createdRecord)
-                        return records
-                    })
+                    $records = [...$records, createdRecord]
+                    // records.update((records) => {
+                    //     records.unshift(createdRecord)
+                    //     return records
+                    // })
                     toast("records succesfully added", true)
                     break;
 				case 'invalid':
@@ -84,8 +76,8 @@
 
             <select disabled={loading} name="account" class="select select-bordered w-full max-w-xs">
                 <option disabled selected>Account</option>
-                {#each accountNames as name}
-                     <option>{name}</option>
+                {#each $accounts as acc (acc.key)}
+                     <option>{acc.name}</option>
                 {/each}
             </select>
             

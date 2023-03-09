@@ -25,10 +25,7 @@
 
     // account combobox
     let types:string[] = ["Food", "Transportation", "Other"]
-    let accountNames:string[] = []
-    $accounts.forEach(element => {
-        accountNames.push(element.name)
-    });
+
 
     const submitEditRecord: SubmitFunction = ({ form, data, action, cancel }) => {
 
@@ -135,8 +132,8 @@
 
             <select bind:this={accountsComboBox} disabled={loading} name="account" class="select select-bordered w-full max-w-xs">
                 <option disabled selected>Account</option>
-                {#each accountNames as name}
-                     <option>{name}</option>
+                {#each $accounts as acc (acc.key)}
+                     <option>{acc.name}</option>
                 {/each}
             </select>
             

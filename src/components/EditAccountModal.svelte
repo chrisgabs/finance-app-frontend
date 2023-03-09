@@ -13,10 +13,6 @@
 	let loading = false;
 	let selectedAccountName:string = "-"
 
-	let accountNames:string[] = []
-	$accounts.forEach(element => {
-		accountNames.push(element.name)
-	});
 
 	const submitEditAccount: SubmitFunction = ({ form, data, action, cancel }) => {
 		loading = true;
