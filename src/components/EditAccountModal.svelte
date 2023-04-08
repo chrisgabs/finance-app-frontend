@@ -24,10 +24,10 @@
                 switch (result.type) {
                     case 'success':
                         records.update((records) => {
-                            return records.filter((obj) => obj.account_name !== selectedAccountName);
+                            return records.filter((record) => record.account_name !== selectedAccountName);
                         })
 						accounts.update((accounts) => {
-                            return accounts.filter((obj) => obj.name !== selectedAccountName);
+                            return accounts.filter((record) => record.name !== selectedAccountName);
 						})
                         toast("account succesfully deleted", true)
                         break;

@@ -5,6 +5,7 @@
     import { accounts, records, selectedRecord } from "../stores/stores"
     import { toast } from '../stores/notification'
     import {get} from "../lib/api"
+	import { updateAccountOnDelete } from "$lib/ledgerHandlerClient";
 
     let editRecordModalCheckbox: HTMLInputElement
     let accountsComboBox: HTMLSelectElement
@@ -31,7 +32,11 @@
 
         loading = true;
         data.append("id", currentId.toString())
-
+        // TODO: Client side form validation here
+        data.append("transaction_type", tabs[activeTab])
+        const accountId = $accounts.find((account) => account.name == data.get("account"))?.id
+        data.set("account", accountId!.toString())
+        
         if (action.search === "?/deleteRecord") {
             return async ({ result, update }) => {
                 switch (result.type) {
@@ -39,6 +44,8 @@
                         records.update((records) => {
                             return records.filter((obj) => obj.id !== currentId);
                         })
+                        console.log($selectedRecord)
+                        updateAccountOnDelete($selectedRecord.account_id, $selectedRecord.amount, $selectedRecord.transaction_type)
                         toast("record succesfully deleted", true)
                         break;
                     case 'invalid':
@@ -54,10 +61,7 @@
                 await update();
 		    };
         }
-        // TODO: Client side form validation here
-        data.append("transaction_type", tabs[activeTab])
-        const accountId = $accounts.find((account) => account.name == data.get("account"))?.id
-        data.set("account", accountId!.toString())
+
         // const objects = Object.fromEntries(data);
 
         // handle edit submit here
@@ -110,6 +114,15 @@
             purposeComboBox.value = purpose
             notes = description
             record_amount = amount
+            $selectedRecord = {
+                transaction_type,
+                account_id,
+                amount,
+                id: currentId,
+                key: currentId,
+                purpose,
+                date_time
+            }
 
             loading = false;
         })

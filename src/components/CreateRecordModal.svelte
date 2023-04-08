@@ -5,6 +5,7 @@
     import { accounts, records } from "../stores/stores"
     import { toast } from '../stores/notification'
 	import { stringify } from "postcss";
+    import { updateAccountOnCreate } from "../lib/ledgerHandlerClient";
 
 
     let createRecordModalCheckbox: HTMLElement
@@ -40,10 +41,8 @@
                     createdRecord.account_name = accountName as string
                     console.log(createdRecord)
                     $records = [...$records, createdRecord]
-                    // records.update((records) => {
-                    //     records.unshift(createdRecord)
-                    //     return records
-                    // })
+                    // Update corresponding account
+                    updateAccountOnCreate(accountId!, createdRecord.amount, createdRecord.transaction_type)
                     toast("records succesfully added", true)
                     break;
 				case 'invalid':

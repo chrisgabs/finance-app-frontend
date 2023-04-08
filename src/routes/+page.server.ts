@@ -5,6 +5,7 @@ import { supabase } from "$lib/supabaseClient";
 import { writable } from "svelte/store";
 import type { recordType } from "src/types/record.type";
 import type { accountType } from "src/types/account.type";
+import { updateAccountOnCreate, updateAccountOnDelete } from "$lib/ledgerHandler";
 
 // --------- LOAD FUNCTION ---------
 
@@ -169,8 +170,9 @@ export const actions = {
 			description: note,
 			owner: locals.session?.user.id
 		}).select("id, purpose, transaction_type, amount, account_id, date_time").limit(1).single()
-
 		
+		const response = await updateAccountOnCreate(locals.sb, parseInt(account), parseInt(amount), transaction_type)
+
 		if (error) {
 			return invalid(400, {message: error})
 		}
@@ -187,13 +189,19 @@ export const actions = {
 	deleteRecord: async ({ request, locals }) => {
 		const body = Object.fromEntries(await request.formData());
 		const id = body.id as string
+		const account = body.account as string
+		const amount = body.amount as string
+		const transaction_type = body.transaction_type as string
 
+		console.log(account, amount, transaction_type)
 		const { data, error } = await locals.sb.from("fin_records")
 			.delete().eq("id", id)
 
 		if (error) {
 			return invalid(400, { message: error })
 		}
+
+		const response = await updateAccountOnDelete(locals.sb, parseInt(account), parseInt(amount), transaction_type)
 
 		if (data) {
 			return { data: data }
@@ -263,7 +271,6 @@ export const actions = {
 			.eq("name", name)
 			.select("name, balance, id")
 			.single()
-
 		if (error) {
 			return invalid(400, { message: error })
 		}

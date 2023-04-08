@@ -46,3 +46,7 @@ export function post(path:string, data:JSON) {
 export function put(path:string, data:JSON) {
 	return send({ method: 'PUT', path, data});
 }
+
+export function patch(path:string, data:JSON) {
+	return send({method: "PATCH", path, data})
+}
