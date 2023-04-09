@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { recordType } from "src/types/record.type";
+	import type { recordType } from "../types/record.type";
     import { selectedRecord } from "../stores/stores";
 
     // export let editModal:HTMLElement;

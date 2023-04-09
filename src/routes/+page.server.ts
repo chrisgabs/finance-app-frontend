@@ -3,8 +3,8 @@ import type { Actions, PageServerLoad } from './$types';
 import {error, redirect} from "@sveltejs/kit"
 import { supabase } from "$lib/supabaseClient";
 import { writable } from "svelte/store";
-import type { recordType } from "src/types/record.type";
-import type { accountType } from "src/types/account.type";
+import type { recordType } from "../types/record.type";
+import type { accountType } from "../types/account.type";
 import { updateAccountOnCreate, updateAccountOnDelete } from "$lib/ledgerHandler";
 
 // --------- LOAD FUNCTION ---------
@@ -82,7 +82,7 @@ export const actions = {
 			message: "Error boi"
 		})
 	}
-  	
+  	console.log(data)
 	// update stores
 
 	console.log("login end")
@@ -94,10 +94,11 @@ export const actions = {
 	console.log(error)
 	if (error) {
 		console.log("error opccured")
-		throw invalid(500, { message: "Something went wrong logging you out." })
+		throw { message: "Something went wrong logging you out." }
 	}
 
-	throw redirect(300, "/login")
+	// why should this be 303
+	throw redirect(303, "/login")
   },
 
   register: async({request, locals}) => {
@@ -146,7 +147,7 @@ export const actions = {
 		}).select("id, name, balance").limit(1).single()
 
 		if (error) {
-			return invalid(400, {message: error})
+			return {message: error}
 		}
 
 		if (data) {
@@ -175,7 +176,7 @@ export const actions = {
 		const response = await updateAccountOnCreate(locals.sb, parseInt(account), parseInt(amount), transaction_type)
 
 		if (error) {
-			return invalid(400, {message: error})
+			return {message: error}
 		}
 		
 		if (data) {
@@ -199,7 +200,7 @@ export const actions = {
 			.delete().eq("id", id)
 
 		if (error) {
-			return invalid(400, { message: error })
+			return { message: error }
 		}
 
 		const response = await updateAccountOnDelete(locals.sb, parseInt(account), parseInt(amount), transaction_type)
@@ -230,7 +231,7 @@ export const actions = {
 			.single()
 
 		if (error) {
-			return invalid(400, { message: error })
+			return {message: error}
 		}
 
 		if (data) {
@@ -246,7 +247,7 @@ export const actions = {
 			.delete().eq("name", name)
 
 		if (error) {
-			return invalid(400, { message: error })
+			return {message: error}
 		}
 
 		if (data) {
@@ -273,7 +274,7 @@ export const actions = {
 			.select("name, balance, id")
 			.single()
 		if (error) {
-			return invalid(400, { message: error })
+			return {message: error}
 		}
 
 		if (data) {

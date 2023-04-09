@@ -1,9 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
 import { redirect } from "@sveltejs/kit"
-import { error } from '@sveltejs/kit';
-import { time_ranges_to_array } from "svelte/internal";
-import { supabase } from "$lib/supabaseClient";
-import { AuthError } from '@supabase/supabase-js';
 
 // --------- LOAD FUNCTIONS ---------
 
@@ -21,10 +17,10 @@ export const actions = {
         })
 
         if (data.session) {
-            throw redirect(300, "/")
+            throw redirect(303, "/")
         }
 
-        if (data) {
+        if (error) {
             return {message: error?.message};
         }
     },

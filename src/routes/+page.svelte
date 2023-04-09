@@ -1,8 +1,8 @@
 <script lang="ts">
     import { records, accounts } from "../stores/stores"
 	import { onMount } from "svelte";
-	import type { recordType } from "src/types/record.type";
-	import type { accountType } from "src/types/account.type";
+	import type { recordType } from "../types/record.type";
+	import type { accountType } from "../types/account.type";
 	import type { Session } from "@supabase/supabase-js";
 	import RecordRow from "./RecordRow.svelte";
 	import NewRecordModal from "../components/CreateRecordModal.svelte";
@@ -53,21 +53,19 @@
     })
 
     const logoutEnhancement: SubmitFunction = ({ form, data, action, cancel }) => {
-
-    // TODO: Client side form validation here
-    // data.append("transaction_type", tabs[activeTab])
-    // const objects = Object.fromEntries(data);
     
+    console.log("logout enhancement called")
 
     return async ({ result, update }) => {
+        console.log(result)
         switch (result.type) {
             case 'success':
                 console.log("case: log out succesful")
                 goto("/login")
                 break;
-            case 'invalid':
+            case 'error':
                 console.log("ERROR")
-                console.log(result.data)
+                console.log(result)
                 break;
             default:
                 break;
@@ -102,8 +100,8 @@
                 <a href="/" class="btn btn-ghost normal-case text-xl">Finance-App</a>
             {/if}
         </div>
-        <form class="navbar-end" use:enhance={logoutEnhancement}>
-            <button formaction="?/logout" class="btn hover:bg-accent hover:outline-0">Logout</button>
+        <form method="post" action="?/logout" class="navbar-end" use:enhance={logoutEnhancement}>
+            <button class="btn hover:bg-accent hover:outline-0">Logout</button>
         </form>
     </div>
     
