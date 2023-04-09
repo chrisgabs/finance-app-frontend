@@ -1,6 +1,6 @@
 import { records, accounts } from "../stores/stores"
 import type { Actions, PageServerLoad } from './$types';
-import {error, invalid, redirect} from "@sveltejs/kit"
+import {error, redirect} from "@sveltejs/kit"
 import { supabase } from "$lib/supabaseClient";
 import { writable } from "svelte/store";
 import type { recordType } from "src/types/record.type";

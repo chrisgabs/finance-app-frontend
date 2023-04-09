@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import { invalid, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import { error } from '@sveltejs/kit';
 import { time_ranges_to_array } from "svelte/internal";
 import { supabase } from "$lib/supabaseClient";
@@ -25,7 +25,7 @@ export const actions = {
         }
 
         if (data) {
-            return invalid(400, {message: error?.message});
+            return {message: error?.message};
         }
     },
 

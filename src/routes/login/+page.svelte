@@ -22,9 +22,9 @@ const loginEnhancement: SubmitFunction = ({ form, data, action, cancel }) => {
                 console.log("succesful")
                 console.log(result)
                 break;
-            case 'invalid':
+            case 'error':
                 console.log("ERROR")
-                console.log(result.data)
+                console.log(result)
                 break;
             default:
                 break;
