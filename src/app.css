@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
+/* @font-face {
     font-family: "FuturaLight";
     src: url("../static/fonts/FuturaPTLight.otf");
 }
@@ -25,4 +25,4 @@
 @font-face {
     font-family: "FuturaCondMedium";
     src: url("../static/fonts/FuturaPTCondMedium.otf");
-}
+} */

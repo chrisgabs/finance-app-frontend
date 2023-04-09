@@ -5,12 +5,14 @@
     import { onMount } from 'svelte'
     import { page } from '$app/stores'
 	import type { Session } from "@supabase/supabase-js";
+	import Toast from "../components/Toast.svelte";
 
   let session:Session|null = null;
   onMount(async () => {
       // get the current session
       const {data} = await supabase.auth.getSession();
       session = data.session;
+      console.log("layout |", session)
 
       // refresh: we did this when user is login with a provider (e.g google)
       if (session && $page.data.session == null) {
@@ -68,6 +70,7 @@
   // })
 </script>
 
-<div class="flex bg-stone-200 h-screen m-0 align-center">
-    <slot />
-</div>
+<!-- <div class=""> -->
+<Toast/>
+<slot />
+<!-- </div> -->

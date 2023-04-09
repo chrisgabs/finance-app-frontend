@@ -1,33 +1,66 @@
-import { records, accounts, user } from "../stores/stores"
+import { records, accounts } from "../stores/stores"
 import type { Actions, PageServerLoad } from './$types';
-import {fail, invalid, redirect} from "@sveltejs/kit"
-import { error } from '@sveltejs/kit';
-import { time_ranges_to_array } from "svelte/internal";
+import {error, invalid, redirect} from "@sveltejs/kit"
 import { supabase } from "$lib/supabaseClient";
+import { writable } from "svelte/store";
+import type { recordType } from "src/types/record.type";
+import type { accountType } from "src/types/account.type";
+import { updateAccountOnCreate, updateAccountOnDelete } from "$lib/ledgerHandler";
 
 // --------- LOAD FUNCTION ---------
 
 export const load = (async ({ locals }) => {
+	console.log("page.server |", locals.session?.user.email)
 	if (!locals.session) {
+		// console.log("there is no session, server side")
 		return {
 			accounts: [],
 			records: []
 		}
 	}
 	
-	const accounts = await locals.sb.from("fin_accounts").select("id, name, balance")
-	const records = await locals.sb.from("fin_records").select("id, type, amount, account, date_time")
+	// console.log("THERE IS A SESSION SERVER SIDE")
+	// Get accounts and records from database
+	const receivedData = await locals.sb.from("fin_accounts").select("id, name, balance")
+	const receivedRecords = await locals.sb.from("fin_records")
+		.select("id, purpose, amount, account_id, date_time, transaction_type")
+		.order("date_time", {ascending: false})
 
-	if (accounts.error){
-		console.log("error")
-		console.log(accounts.error);
-	} else if (records.error){
-		console.log(records.error);
-	}
+		
+		// Check for errors
+		if (receivedData.error){
+			console.log("error")
+			console.log(receivedData.error);
+		} else if (receivedRecords.error){
+			console.log(receivedRecords.error);
+		}
+		
+		// Records PostgresReponse to Array
+		let records: recordType[] = []
+		let recordsData = receivedRecords.data
+		let accounts: accountType[] = []
+		let accountsData = receivedData.data
+
+		for (let i = 0; i < recordsData!.length; i++) {
+			const {id, purpose, amount, account_id, date_time, transaction_type} = recordsData![i]
+			// Get account names associated with record
+			const account_name = accountsData!.find((record) => record.id == account_id)?.name
+			records.push({
+				id, purpose, amount, account_id, date_time, transaction_type, key:id, account_name
+			})
+		}
+
+		for (let i = 0; i < accountsData!.length; i++) {
+			const { id, name, balance } = accountsData![i]
+			accounts.push({
+				id, name, balance , key: id
+			})
+		}
+
 
 	return {
-		accounts: accounts.data,
-		records: records.data
+		accounts: accounts,
+		records: records
 	};
 }) satisfies PageServerLoad;
 
@@ -45,7 +78,7 @@ export const actions = {
 
 	if (err) {
 		console.log(err)
-		return fail(500, {
+		return error(500, {
 			message: "Error boi"
 		})
 	}
@@ -57,13 +90,14 @@ export const actions = {
 
   logout: async({request, locals}) => {
 	console.log("logout")
-	const { error: err } = await locals.sb.auth.signOut()
-
-	if (err) {
-	  throw error(500, "Something went wrong logging you out.")
+	const { error } = await locals.sb.auth.signOut()
+	console.log(error)
+	if (error) {
+		console.log("error opccured")
+		throw invalid(500, { message: "Something went wrong logging you out." })
 	}
 
-	throw redirect(303, "/")
+	throw redirect(300, "/login")
   },
 
   register: async({request, locals}) => {
@@ -102,8 +136,8 @@ export const actions = {
 
 	createAccount: async ({request, locals}) => {
 		const body = Object.fromEntries(await request.formData());
-		const name = body.account_name as string
-		const balance = body.starting_balance as string
+		const name = body.name as string
+		const balance = body.balance as string
 		console.log(name, balance)
 		const {data, error} = await locals.sb.from("fin_accounts").insert({
 			name: name,
@@ -122,25 +156,131 @@ export const actions = {
 
 	createRecord: async ({request, locals}) => {
 		const body = Object.fromEntries(await request.formData());
-		const type = body.type as string
+		const purpose = body.purpose as string
 		const account = body.account as string
 		const amount = body.amount as string
+		const note = body.note as string
+		const transaction_type = body.transaction_type as string
+		
 		const {data, error} = await locals.sb.from("fin_records").insert({
-			type: type,
+			purpose: purpose,
+			transaction_type: transaction_type,
 			amount: amount,
 			date_time: new Date(),
-			account: account,
-			description: "hotbiggitydog",
+			account_id: account,
+			description: note,
 			owner: locals.session?.user.id
-		}).select("id, type, amount, account, date_time").limit(1).single()
+		}).select("id, purpose, transaction_type, amount, account_id, date_time").limit(1).single()
+		
+		const response = await updateAccountOnCreate(locals.sb, parseInt(account), parseInt(amount), transaction_type)
 
 		if (error) {
 			return invalid(400, {message: error})
 		}
+		
+		if (data) {
+			const {id, purpose, transaction_type, amount, account_id, date_time} = data
+			let createdRecord:recordType = {
+				id, purpose, transaction_type, amount, account_id, date_time, key: id
+			}
+			return {data: createdRecord}
+		}
+	},
+
+	deleteRecord: async ({ request, locals }) => {
+		const body = Object.fromEntries(await request.formData());
+		const id = body.id as string
+		const account = body.account as string
+		const amount = body.amount as string
+		const transaction_type = body.transaction_type as string
+
+		console.log(account, amount, transaction_type)
+		const { data, error } = await locals.sb.from("fin_records")
+			.delete().eq("id", id)
+
+		if (error) {
+			return invalid(400, { message: error })
+		}
+
+		const response = await updateAccountOnDelete(locals.sb, parseInt(account), parseInt(amount), transaction_type)
 
 		if (data) {
-			return {data: data}
+			return { data: data }
 		}
-	}
+	},
+	
+	editRecord: async ({ request, locals }) => {
+		const body = Object.fromEntries(await request.formData());
+		const id = body.id as string
+		const purpose = body.purpose as string
+		const account = body.account as string
+		const amount = body.amount as string
+		const note = body.note as string
+		const transaction_type = body.transaction_type as string
+
+		const { data, error } = await locals.sb.from("fin_records")
+			.update({
+				amount: amount, 
+				account_id: account, 
+				description: note, 
+				transaction_type: transaction_type, 
+				purpose: purpose})
+			.eq("id", id)
+			.select("id, purpose, transaction_type, amount, account_id, date_time")
+			.single()
+
+		if (error) {
+			return invalid(400, { message: error })
+		}
+
+		if (data) {
+			return { data: data }
+		}
+	},
+
+	deleteAccount: async ({ request, locals }) => {
+		const body = Object.fromEntries(await request.formData());
+		const name = body.name as string
+
+		const { data, error } = await locals.sb.from("fin_accounts")
+			.delete().eq("name", name)
+
+		if (error) {
+			return invalid(400, { message: error })
+		}
+
+		if (data) {
+			return { data: data }
+		}
+	},
+
+	editAccount: async ({ request, locals }) => {
+		const body = Object.fromEntries(await request.formData());
+		const name = body.name as string
+		const newName = body.newName as string
+		const balance = body.balance as string
+
+		console.log(name)
+		console.log(newName)
+		console.log(balance)
+
+		const { data, error } = await locals.sb.from("fin_accounts")
+			.update({
+				name: newName,
+				balance: balance
+			})
+			.eq("name", name)
+			.select("name, balance, id")
+			.single()
+		if (error) {
+			return invalid(400, { message: error })
+		}
+
+		if (data) {
+			return { data: data }
+		}
+	},
+
+
 
 } satisfies Actions;
