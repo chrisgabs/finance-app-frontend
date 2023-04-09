@@ -17,10 +17,6 @@
     // let editModal:HTMLElement;
     let totalBalance:number;
 
-    $: if ($records) {
-        console.log("records are updated -----------")
-    }
-
     interface PageData {
         records: recordType[] | null,
         accounts: accountType[] | null,
@@ -32,8 +28,10 @@
         // accounts.set(data.accounts)
     // }
 
-    console.log("refreshed")
+    console.log("page.svelte |", data.session?.user.email)
+    console.log($records);
     if (data.session) {
+        // console.log(data.session)
         // settings stores
         // console.log(data.session)
         // console.log("there is a session client side")
@@ -42,6 +40,7 @@
     }else {
         // console.log("no session client side :(")
     }
+
     $: {
         totalBalance = $accounts.reduce((a, b) => a + b.balance, 0)
     }

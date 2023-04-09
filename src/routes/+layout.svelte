@@ -12,6 +12,7 @@
       // get the current session
       const {data} = await supabase.auth.getSession();
       session = data.session;
+      console.log("layout |", session)
 
       // refresh: we did this when user is login with a provider (e.g google)
       if (session && $page.data.session == null) {

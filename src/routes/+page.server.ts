@@ -10,6 +10,7 @@ import { updateAccountOnCreate, updateAccountOnDelete } from "$lib/ledgerHandler
 // --------- LOAD FUNCTION ---------
 
 export const load = (async ({ locals }) => {
+	console.log("page.server |", locals.session?.user.email)
 	if (!locals.session) {
 		// console.log("there is no session, server side")
 		return {
