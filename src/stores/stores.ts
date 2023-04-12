@@ -26,8 +26,6 @@ export const selectedAccount = writable<accountType>({
 
 function createRecord() {
     const { subscribe, set, update } = writable<recordType[]>([
-        { id: 1, transaction_type: "Expense", purpose: 'Trasnportation', account_name: 'Unionbank', amount: 1000, date_time: new Date("2022-03-01"), key: 1, account_id: 2},
-        { id: 2, transaction_type: "Expense", purpose: 'Food', account_name: 'BPI', amount: 100000, date_time: new Date("2022-03-01"), key: 2, account_id: 1 },
         { id: 3, transaction_type: "Expense", purpose: 'Communication', account_name: 'Cash', amount: 2000, date_time: new Date("2022-03-01"), key: 3, account_id: 3 },
         { id: 4, transaction_type: "Expense", purpose: 'Others', account_name: 'bank', amount: 1234, date_time: new Date("2022-03-01"), key: 4, account_id: 4 },
         { id: 5, transaction_type: "Expense", purpose: 'Others', account_name: 'bank', amount: 5, date_time: new Date("2022-03-01"), key: 5, account_id: 5 },
@@ -75,10 +73,10 @@ function createRecord() {
 
 function createAccount() {
     const { subscribe, set, update } = writable<accountType[]>([
-        { id: 1, name: 'Gcash', balance: 500_00, key: 1 },
-        { id: 2, name: 'Cash', balance: 800_000, key: 2 },
-        { id: 3, name: 'UnionBank', balance: 100, key: 3 },
-        { id: 4, name: 'BPI', balance: 0, key: 4 },
+        { id: 1, name: 'New Account', balance: 69_000, key: 1 },
+        { id: 2, name: 'BDO', balance: 999_000, key: 2 },
+        // { id: 3, name: 'UnionBank', balance: 100, key: 3 },
+        // { id: 4, name: 'BPI', balance: 0, key: 4 },
     ]);
 
     return {

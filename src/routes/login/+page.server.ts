@@ -1,37 +1,52 @@
 import type { Actions, PageServerLoad } from './$types';
-import { redirect } from "@sveltejs/kit"
-
+import { fail, redirect } from '@sveltejs/kit';
+import { AuthApiError } from '@supabase/supabase-js';
 // --------- LOAD FUNCTIONS ---------
 
 
 // --------- ACTIONS ---------
 
 export const actions = {
-    login: async ({ request, locals }) => {
-        const body = Object.fromEntries(await request.formData());
-        const email = body.email as string
-        const password = body.password as string
+    login: async ({ request, locals: { supabase } }) => {
+        // -------------------------- new --------------------------
+        const formData = await request.formData();
 
-        const { data, error } = await locals.sb.auth.signInWithPassword({
-            email, password
-        })
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
 
-        if (data.session) {
-            throw redirect(303, "/")
-        }
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
 
+        console.log("error")
         if (error) {
-            return {message: error?.message};
+            if (error instanceof AuthApiError && error.status === 400) {
+                return fail(400, {
+                    error: 'Invalid credentials.',
+                    values: {
+                        email
+                    }
+                });
+            }
+            return fail(500, {
+                error: 'Server error. Try again later.',
+                values: {
+                    email
+                }
+            });
         }
+
+
+        throw redirect(303, '/');
     },
 
-    register: async ({ request, locals }) => {
-        console.log("register started")
+    register: async ({ request, locals: { supabase } }) => {
         const data = await request.formData();
         const email = data.get("email")!.toString()
         const first_name = email.split("@")[0]
 
-        locals.sb.auth.signUp({
+        supabase.auth.signUp({
             email: email,
             password: data.get("password")!.toString(),
             options: {
@@ -41,21 +56,12 @@ export const actions = {
                 }
             }
         }).then(async (response) => {
+            console.log("signed up successfully")
             console.log(response)
-            // const {id, email} = response.data.user!
-            // console.log()
-            // const {data, error} = await supabase.from("profiles").upsert({
-            //   id: id,
-            //   email: email,
-            //   first_name: "firstnameu",
-            //   last_name: "lastnameu"
-            // })
-            // console.log(data)
         }).catch((err) => {
+            console.log("sign up unsuccessful")
             console.log(err)
         })
-
-        console.log("register end")
     },
 
 } satisfies Actions;

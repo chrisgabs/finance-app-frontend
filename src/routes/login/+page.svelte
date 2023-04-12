@@ -1,38 +1,29 @@
 <script lang="ts">
-import { goto } from '$app/navigation';
-import { browser } from "$app/environment";
-import { enhance } from '$app/forms';
-import type { SubmitFunction } from '$app/forms';
+    import { enhance } from '$app/forms';
+    import type { SubmitFunction } from '$app/forms';
 
-let loginContainer: HTMLElement;
+    let loginContainer: HTMLElement;
 
-const scrollToLoginContainer = () => {
-    loginContainer.scrollIntoView({behavior: "smooth", block:"end"});
-}
+    const scrollToLoginContainer = () => {
+        loginContainer.scrollIntoView({behavior: "smooth", block:"end"});
+    }
 
-const loginEnhancement: SubmitFunction = ({ form, data, action, cancel }) => {
+    const loginEnhancement: SubmitFunction = ({ form, data, action, cancel }) => {
 
-    // TODO: Client side form validation here
-    // data.append("transaction_type", tabs[activeTab])
-    // const objects = Object.fromEntries(data);
+        // TODO: Client side form validation here
 
-    return async ({ result, update }) => {
-        switch (result.type) {
-            case 'redirect':
-                console.log("redirect")
-                console.log(result)
-                break;
-            case 'error':
-                console.log("ERROR")
-                console.log(result)
-                break;
-            default:
-                break;
-        }
-        await update();
+        return async ({ result, update }) => {
+            switch (result.type) {
+                case 'failure':
+                    console.log(result.data!.error)
+                    break;
+                default:
+                    break;
+            }
+            await update();
+        };
+
     };
-
-};
 
 
 </script>

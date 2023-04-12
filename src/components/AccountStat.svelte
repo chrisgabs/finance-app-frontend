@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { accountType } from "src/types/account.type";
+	import type { accountType } from "../types/account.type";
     import { selectedAccount } from "../stores/stores";
 
 

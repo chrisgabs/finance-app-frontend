@@ -1,17 +1,17 @@
 <script lang="ts">
     import { records, accounts } from "../stores/stores"
 	import { onMount } from "svelte";
-	import type { recordType } from "../types/record.type";
 	import type { accountType } from "../types/account.type";
+	import type { recordType } from "../types/record.type";
 	import type { Session } from "@supabase/supabase-js";
 	import RecordRow from "./RecordRow.svelte";
-	import NewRecordModal from "../components/CreateRecordModal.svelte";
-    import NewAccountModal from "../components/CreateAccountModal.svelte"
+	// import NewRecordModal from "../components/CreateRecordModal.svelte";
+    // import NewAccountModal from "../components/CreateAccountModal.svelte"
 	import AccountStat from "../components/AccountStat.svelte";
 	import { enhance, type SubmitFunction } from "$app/forms";
 	import { goto } from "$app/navigation";
-	import EditRecordModal from "../components/EditRecordModal.svelte";
-	import EditAccountModal from "../components/EditAccountModal.svelte";
+	// import EditRecordModal from "../components/EditRecordModal.svelte";
+	// import EditAccountModal from "../components/EditAccountModal.svelte";
 
     export let data: PageData;
     // let editModal:HTMLElement;
@@ -28,18 +28,18 @@
         // accounts.set(data.accounts)
     // }
 
-    console.log("page.svelte |", data.session?.user.email)
-    console.log($records);
-    if (data.session) {
-        // console.log(data.session)
-        // settings stores
-        // console.log(data.session)
-        // console.log("there is a session client side")
-        records.set(data.records!)
-        accounts.set(data.accounts!)
-    }else {
-        // console.log("no session client side :(")
-    }
+    // console.log("page.svelte |", data.session?.user.email)
+    // console.log($records);
+    // if (data.session) {
+    //     // console.log(data.session)
+    //     // settings stores
+    //     // console.log(data.session)
+    //     // console.log("there is a session client side")
+    //     records.set(data.records!)
+    //     accounts.set(data.accounts!)
+    // }else {
+    //     // console.log("no session client side :(")
+    // }
 
     $: {
         totalBalance = $accounts.reduce((a, b) => a + b.balance, 0)
@@ -54,35 +54,35 @@
 
     const logoutEnhancement: SubmitFunction = ({ form, data, action, cancel }) => {
     
-    console.log("logout enhancement called")
+        console.log("logout enhancement called")
 
-    return async ({ result, update }) => {
-        console.log(result)
-        switch (result.type) {
-            case 'success':
-                console.log("case: log out succesful")
-                goto("/login")
-                break;
-            case 'error':
-                console.log("ERROR")
-                console.log(result)
-                break;
-            default:
-                break;
-        }
-        await update();
+        return async ({ result, update }) => {
+            console.log(result)
+            switch (result.type) {
+                case 'success':
+                    console.log("case: log out succesful")
+                    goto("/login")
+                    break;
+                case 'error':
+                    console.log("ERROR")
+                    console.log(result)
+                    break;
+                default:
+                    break;
+            }
+            await update();
+        };
+
     };
-
-};
 
 </script>
 
 <!-- ---------------------------------- HTML ---------------------------------- -->
 <!-- Type, account, amount, description, date_time, cancel, add-->
-<EditRecordModal/>
+<!-- <EditRecordModal/>
 <EditAccountModal/>
 <NewRecordModal/>
-<NewAccountModal/>
+<NewAccountModal/> -->
 
 <!-- m-auto my-auto max-w-[500px] space-y-2 -->
 <div class="flex-col max-w-[600px] mx-5 sm:mx-auto space-y-4">
@@ -148,44 +148,4 @@
         </tbody>
     </table>
 
-    <!-- <LoginSection session={data.session}/> -->
-
-    <!-- <CreateAccountSection/> -->
-
-    <!-- Accounts Section -->
-    <!-- <div class="accounts-container flex outline-1 outline p-2 space-x-2 overflow-auto no-scrollbar">
-        {#each $accounts as account (account.id)}
-            <Account account={account}/>
-        {/each}
-    </div> -->
-
-    <!-- <CreateRecordSection/> -->
-
-    <!-- {#if recordsLoading}
-         <div class="Loading text-center" transition:fade>
-             Loading Records
-         </div>
-    {/if} -->
-
-    <!-- {#each $records as record (record.id)}
-        <Record record={record}/>
-    {/each} -->
-
 </div>
-<!-- 
-<style>
-    @tailwind components;
-
-    @layer components {
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-    }
-</style> -->

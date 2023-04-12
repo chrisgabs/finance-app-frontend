@@ -1,1 +1,0 @@
-import{w as i}from"./singletons.865aaa9f.js";const o=i([]);function r(t,e){o.update(n=>[{message:t,status:e},...n]),setTimeout(a,2500)}function a(){o.update(t=>[...t.slice(0,t.length-1)])}export{o as n,r as t};
