@@ -1,7 +1,7 @@
 // functions that the client will call hereimport { error } from '@sveltejs/kit';
 import { error } from "@sveltejs/kit";
 
-const base:string = 'http://localhost:5173/api';
+// const base:string = 'http://localhost:5173/api';
 
 type sendParams = {
     method: string,
@@ -17,11 +17,7 @@ async function send({ method, path, data }: sendParams) {
 		opts.body = JSON.stringify(data);
 	}
 
-	// if (token) {
-	// 	opts.headers['Authorization'] = `Token ${token}`;
-	// }
-
-	const res = await fetch(`${base}/${path}`, opts);
+	const res = await fetch(`${window.location.origin}/api/${path}`, opts);
 	if (res.ok || res.status === 422) {
 		const text = await res.text();
 		return text ? JSON.parse(text) : {};

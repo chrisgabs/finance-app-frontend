@@ -30,7 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (event.url.pathname !== "/login") {
         const session = await event.locals.getSession();
         if (!session) {
-            console.log("user is not signed in")
+            console.log("user is not signed in | ", event.url.pathname)
             throw redirect(303, '/login');
         }
     }
