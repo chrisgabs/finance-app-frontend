@@ -8,7 +8,6 @@
     const {name, balance} = account
 
     const oneEditAccountModal = () => {
-        console.log(account)
         selectedAccount.update((account) => {
             account.name = name
             account.balance = balance

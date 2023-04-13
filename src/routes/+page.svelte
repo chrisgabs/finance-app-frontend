@@ -5,16 +5,15 @@
 	import type { recordType } from "../types/record.type";
 	import type { Session } from "@supabase/supabase-js";
 	import RecordRow from "./RecordRow.svelte";
-	// import NewRecordModal from "../components/CreateRecordModal.svelte";
-    // import NewAccountModal from "../components/CreateAccountModal.svelte"
+	import NewRecordModal from "../components/CreateRecordModal.svelte";
+    import NewAccountModal from "../components/CreateAccountModal.svelte"
 	import AccountStat from "../components/AccountStat.svelte";
 	import { enhance, type SubmitFunction } from "$app/forms";
 	import { goto } from "$app/navigation";
-	// import EditRecordModal from "../components/EditRecordModal.svelte";
-	// import EditAccountModal from "../components/EditAccountModal.svelte";
+	import EditRecordModal from "../components/EditRecordModal.svelte";
+	import EditAccountModal from "../components/EditAccountModal.svelte";
 
     export let data: PageData;
-    // let editModal:HTMLElement;
     let totalBalance:number;
 
     interface PageData {
@@ -23,32 +22,16 @@
         session: Session | null,
     }
 
-    // if (data.records && data.accounts) {
-        // records.set(data.records)
-        // accounts.set(data.accounts)
-    // }
-
-    // console.log("page.svelte |", data.session?.user.email)
-    // console.log($records);
-    // if (data.session) {
-    //     // console.log(data.session)
-    //     // settings stores
-    //     // console.log(data.session)
-    //     // console.log("there is a session client side")
-    //     records.set(data.records!)
-    //     accounts.set(data.accounts!)
-    // }else {
-    //     // console.log("no session client side :(")
-    // }
+    if (data.records && data.accounts) {
+        records.set(data.records)
+        accounts.set(data.accounts)
+    }
 
     $: {
         totalBalance = $accounts.reduce((a, b) => a + b.balance, 0)
     }
 
-    // let recordsLoading:boolean = true;
-
     onMount(() => {
-        // api.get("accounts", "hatdog").then((res) => console.log(res))
         console.log(document.cookie)
     })
 
@@ -79,12 +62,11 @@
 
 <!-- ---------------------------------- HTML ---------------------------------- -->
 <!-- Type, account, amount, description, date_time, cancel, add-->
-<!-- <EditRecordModal/>
-<EditAccountModal/>
 <NewRecordModal/>
-<NewAccountModal/> -->
+<NewAccountModal/>
+<EditRecordModal/>
+<EditAccountModal/>
 
-<!-- m-auto my-auto max-w-[500px] space-y-2 -->
 <div class="flex-col max-w-[600px] mx-5 sm:mx-auto space-y-4">
 
     <div class="navbar bg-base-100 mt-4 rounded-box outline outline-1">

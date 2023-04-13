@@ -47,7 +47,7 @@
 	<div class="flex md:w-1/3 justify-center py-10 items-center bg-white" bind:this={loginContainer}>
 
         <!-- login form -->
-		<form method="POST" class="bg-white outline outline-2 p-12 rounded-box" use:enhance={loginEnhancement}>
+		<form method="POST" class="bg-white p-12" use:enhance={loginEnhancement}>
 			<h1 class="text-gray-800 font-bold text-2xl mb-1">Welcome!</h1>
 			<p class="text-sm font-normal text-gray-600 mb-7">Log in or register</p>
 
