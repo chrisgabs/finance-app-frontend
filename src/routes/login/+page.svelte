@@ -3,7 +3,8 @@
     import type { SubmitFunction } from '$app/forms';
 
     let loginContainer: HTMLElement;
-
+    let login:boolean = true;
+    
     const scrollToLoginContainer = () => {
         loginContainer.scrollIntoView({behavior: "smooth", block:"end"});
     }
@@ -47,12 +48,16 @@
 	<div class="flex md:w-1/3 justify-center py-10 items-center bg-white" bind:this={loginContainer}>
 
         <!-- login form -->
-		<form method="POST" class="bg-white p-12" use:enhance={loginEnhancement}>
-			<h1 class="text-gray-800 font-bold text-2xl mb-1">Welcome!</h1>
-			<p class="text-sm font-normal text-gray-600 mb-7">Log in or register</p>
+		<form method="POST" class="bg-white p-10 outline outline-1 rounded-md outline-neutral/25" use:enhance={loginEnhancement}>
+			<h1 class="text-gray-800 font-bold text-2xl text-center mb-6">
+                {login ? 'Login' : 'Register'}
+            </h1>
+			<!-- <p class="text-sm font-normal text-gray-600 mb-5 text-center">Login</p> -->
+
+            <!-- <div class="divider my-1"></div> -->
 
             <!-- email -->
-            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+            <div class="flex items-center border-[1px] border-current/90 py-2 px-3 rounded-2xl mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -62,7 +67,7 @@
             </div>
 
             <!-- password -->
-            <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+            <div class="flex items-center border-[1px] py-2 px-3 rounded-2xl mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
                     fill="currentColor">
                     <path fill-rule="evenodd"
@@ -72,10 +77,29 @@
                 <input class="pl-2 outline-none border-none" type="password" name="password" id="password" placeholder="Password" />
             </div>
 
-            <button formaction="?/login" class="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2">Login</button>
+            <!-- confirm password -->
+            {#if !login}
+                <div class="flex items-center border-[1px] py-2 px-3 rounded-2xl mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <input class="pl-2 outline-none border-none" type="password" name="confirm-password" id="confirm-password" placeholder="Confirm Password" />
+                </div>
+            {/if}
+
+            <!-- <div class="divider my-1"></div> -->
+
+            <button formaction={login ? '?/login' : '?/register'} class="block w-full bg-indigo-600 py-2 px-3 hover:bg-neutral transition rounded-2xl text-white font-semibold mb-2">
+                {login ? 'Login' : 'Create Account'}
+            </button>
             <div class="flex justify-between">
-                <button formaction="?/register" class="text-sm ml-2 hover:text-blue-500 cursor-pointer">Register</button>
-                <span class="text-sm ml-2 hover:text-blue-500 cursor-pointer">Forgot Password ?</span>
+                <button on:click={(e) => {e.preventDefault(); login = !login}} class="text-sm ml-2 hover:text-blue-500 cursor-pointer">
+                    {login ? 'Register' : 'Login'}
+                </button>
+                <button disabled class="text-sm ml-2 text-gray-400">Forgot Password?</button>
             </div>
 		</form>
 

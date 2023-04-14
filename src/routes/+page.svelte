@@ -113,7 +113,7 @@
     <!-- <span><h3>Records</h3></span> -->
     <!-- <h3>Records</h3> -->
 
-    <table class="table w-full outline outline-1 rounded-lg m-0 p-0">
+    <table class="table w-full outline outline-1 round m-0 p-0">
         <!-- head -->
         <thead>
         <tr>
@@ -124,6 +124,9 @@
         </tr>
         </thead>
         <tbody>
+            <!-- {#if $records.length == 0}
+                <td colspan="3">This is a message</td>
+            {/if} -->
             {#each $records as record (record.key)}
                 <RecordRow record={record}/>
             {/each}
